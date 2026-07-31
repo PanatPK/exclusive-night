@@ -224,9 +224,30 @@ const esc = s => String(s??"").replace(/[<>&"]/g,c=>({"<":"&lt;",">":"&gt;","&":
 const canvas = document.createElement("canvas"), ctx = canvas.getContext("2d", {willReadFrequently:true});
 let detector = null, lastText = "", lastAt = 0;
 
-startBtn.onclick = async ()=>{
+function camError(title, fix){
+  starter.style.display = "grid";
+  starter.innerHTML = `<div>
+    <p><b style="color:#fff;font-size:14px;letter-spacing:.02em">${title}</b><br><br>${fix}<br>
+    <span style="font-size:11px">ระหว่างนี้ใช้ช่องค้นหาชื่อด้านล่างเช็คอินได้ตามปกติ</span></p>
+    <button class="btn" id="retryBtn" style="max-width:250px;margin:0 auto">ลองเปิดกล้องอีกครั้ง</button></div>`;
+  document.getElementById("retryBtn").onclick = startCam;
+}
+
+async function startCam(){
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia)
+    return camError("เบราว์เซอร์นี้เปิดกล้องไม่ได้",
+      "ลองเปิดด้วย Chrome บนแอนดรอยด์ หรือ Safari บน iPhone");
+  if(!window.isSecureContext)
+    return camError("หน้านี้ไม่ได้เปิดผ่าน https",
+      "ที่อยู่ตอนนี้คือ <code style='font-size:11px'>"+location.origin+"</code><br>ต้องเปิดผ่านลิงก์ github.io เท่านั้น กล้องถึงจะทำงาน");
+
   try{
-    const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}}});
+    let stream;
+    try{
+      stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}}});
+    }catch(e1){
+      stream = await navigator.mediaDevices.getUserMedia({video:true});   /* เครื่องที่มีกล้องเดียว */
+    }
     video.srcObject = stream; await video.play();
     starter.style.display = "none";
     if("BarcodeDetector" in window){
@@ -234,11 +255,24 @@ startBtn.onclick = async ()=>{
     }
     requestAnimationFrame(loop);
   }catch(e){
-    starter.innerHTML = `<div><p>เปิดกล้องไม่ได้<br>
-      ต้องเปิดหน้านี้ผ่าน https และอนุญาตให้ใช้กล้อง<br>
-      <span style="font-size:11px">ระหว่างนี้ใช้ช่องค้นหาชื่อด้านล่างเช็คอินได้ตามปกติ</span></p></div>`;
+    const map = {
+      NotAllowedError:["ยังไม่ได้อนุญาตให้ใช้กล้อง",
+        "กดไอคอนรูปกล้องหรือแม่กุญแจข้างแถบที่อยู่ → เลือก <b>อนุญาต / Allow</b> → โหลดหน้าใหม่<br>บน Mac ถ้ายังไม่ขึ้น ให้ไป System Settings → Privacy & Security → Camera แล้วเปิดสิทธิ์ให้เบราว์เซอร์"],
+      NotFoundError:["ไม่พบกล้องในเครื่องนี้",
+        "เครื่องนี้ไม่มีกล้องที่ใช้ได้ ให้ย้ายไปเปิดบนมือถือแทน"],
+      NotReadableError:["กล้องถูกโปรแกรมอื่นใช้อยู่",
+        "ปิดแอปหรือแท็บที่เปิดกล้องค้างไว้ เช่น Zoom, LINE, Google Meet หรือแอปกล้อง แล้วกดลองใหม่"],
+      OverconstrainedError:["ไม่พบกล้องหลัง",
+        "กดลองใหม่อีกครั้ง ระบบจะสลับไปใช้กล้องที่มีให้อัตโนมัติ"],
+      SecurityError:["เบราว์เซอร์บล็อกการใช้กล้อง",
+        "ตรวจการตั้งค่าความเป็นส่วนตัวของเบราว์เซอร์ แล้วกดลองใหม่"],
+      AbortError:["เปิดกล้องไม่สำเร็จ", "กดลองใหม่อีกครั้ง"]
+    };
+    const m = map[e.name] || ["เปิดกล้องไม่ได้", "รหัสข้อผิดพลาด: <code style='font-size:11px'>"+e.name+" — "+e.message+"</code>"];
+    camError(m[0], m[1]);
   }
-};
+}
+startBtn.onclick = startCam;
 
 async function loop(){
   if(video.readyState === video.HAVE_ENOUGH_DATA && !busy){

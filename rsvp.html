@@ -6,7 +6,7 @@
 <title>ตอบรับคำเชิญ — THE EX-CLUSIVE NIGHT</title>
 <style>
   :root{
-    --se-red:#E2001A; --ink:#111111; --ink-soft:#4A4A4A; --grey:#909195;
+    --se-red:#C2272D; --ink:#111111; --ink-soft:#4A4A4A; --grey:#909195;
     --line:#D9D9D9; --paper:#FFFFFF;
     --font-display:"Times New Roman","Georgia",serif;
     --font-ui:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","Noto Sans Thai","Sarabun",Arial,sans-serif;
@@ -16,12 +16,14 @@
        display:flex;justify-content:center;min-height:100dvh}
   .sheet{width:100%;max-width:460px;background:var(--paper);min-height:100dvh;
          box-shadow:0 0 60px rgba(0,0,0,.12);display:flex;flex-direction:column}
-  .heatbar{height:4px;flex:none;background:linear-gradient(90deg,#1E5AFF,#00B3D6 30%,#FFB020 55%,#FF5A1F 80%,#E2001A)}
+  .heatbar{height:4px;flex:none;background:linear-gradient(90deg,#1E5AFF,#00B3D6 30%,#FFB020 55%,#FF5A1F 80%,#C2272D)}
 
   header{padding:26px 30px 0;text-align:center;flex:none}
-  .logo{display:inline-block;background:#fff;border:1px solid #1a1a1a;padding:5px 11px 4px}
-  .logo b{display:block;font-size:13.5px;font-weight:800;letter-spacing:-.01em;line-height:1.15;white-space:nowrap}
-  .logo i{display:block;height:3.5px;background:var(--se-red);margin-top:3px}
+  .logo{display:inline-block;background:#fff;padding:4px 7px}
+  .logo b{display:block;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+          font-size:15px;font-weight:900;color:#000;letter-spacing:-.025em;
+          line-height:1.06;white-space:nowrap;margin:2.5px 0}
+  .logo i{display:block;height:2px;background:#C2272D}
 
   .title{font-family:var(--font-display);text-align:center;line-height:.95;margin:24px 0 0;
          font-size:clamp(28px,8vw,36px);letter-spacing:.02em}
@@ -111,7 +113,7 @@
 <body>
 <div class="sheet">
   <div class="heatbar"></div>
-  <header><div class="logo"><b>STIEBEL ELTRON</b><i></i></div></header>
+  <header><div class="logo"><i></i><b>STIEBEL ELTRON</b><i></i></div></header>
 
   <main>
     <h1 class="title"><span class="pre">THE</span>EX-CLUSIVE<span class="red">NIGHT</span></h1>

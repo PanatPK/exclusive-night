@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ตรวจการเชื่อมต่อ — EX-CLUSIVE NIGHT</title>
+<style>
+  :root{--red:#C2272D;--ok:#0F9D58;--warn:#F5A623;--line:#E2E2E4;--grey:#8A8A8E;
+        --ui:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","Noto Sans Thai",Arial,sans-serif}
+  *{box-sizing:border-box}
+  body{margin:0;background:#F4F4F5;font-family:var(--ui);color:#111;padding:24px 16px 60px}
+  .wrap{max-width:620px;margin:0 auto}
+  h1{font-size:14px;letter-spacing:.2em;margin:0 0 4px}
+  .sub{font-size:11.5px;color:var(--grey);margin:0 0 22px;line-height:1.7}
+  .btn{display:block;width:100%;border:0;padding:16px;background:var(--red);color:#fff;font-family:inherit;
+       font-size:12px;font-weight:700;letter-spacing:.16em;cursor:pointer;border-radius:2px}
+  .btn:disabled{opacity:.5}
+  .item{background:#fff;border:1px solid var(--line);border-left:4px solid var(--line);padding:14px 16px;margin-top:10px}
+  .item.ok{border-left-color:var(--ok)}
+  .item.bad{border-left-color:var(--red)}
+  .item.warn{border-left-color:var(--warn)}
+  .item b{display:block;font-size:13px;margin-bottom:5px}
+  .item p{margin:0;font-size:12px;line-height:1.75;color:#4A4A4A;word-break:break-all}
+  .item code{background:#F4F4F5;padding:1px 5px;font-size:11.5px;border:1px solid var(--line)}
+  .fix{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);font-size:12px;line-height:1.8}
+  .fix b{display:inline;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>CONNECTION TEST</h1>
+  <p class="sub">หน้านี้ตรวจว่าเว็บคุยกับ Firebase ได้จริงหรือไม่ และบอกสาเหตุถ้าไม่ได้<br>
+     ใช้เสร็จแล้วลบไฟล์ <code>test.html</code> ออกจาก repo ได้เลย</p>
+  <button class="btn" id="run">เริ่มตรวจสอบ</button>
+  <div id="out"></div>
+</div>
+
+<script src="config.js"></script>
+<script>
+const out = document.getElementById("out");
+const add = (state, title, body, fix) => {
+  const d = document.createElement("div");
+  d.className = "item " + state;
+  d.innerHTML = `<b>${title}</b><p>${body}</p>` + (fix ? `<div class="fix">${fix}</div>` : "");
+  out.appendChild(d);
+};
+
+run.onclick = async ()=>{
+  out.innerHTML = ""; run.disabled = true; run.textContent = "กำลังตรวจ…";
+
+  /* 1 — เปิดจากที่ไหน */
+  const proto = location.protocol;
+  if(proto === "file:"){
+    add("bad","1. กำลังเปิดจากไฟล์ในเครื่อง",
+      "ที่อยู่ตอนนี้คือ <code>file://</code> ไม่ใช่เว็บจริง",
+      "<b>วิธีแก้:</b> ปิดหน้านี้ แล้วเปิดผ่านลิงก์ GitHub Pages เช่น <code>https://ชื่อบัญชี.github.io/exclusive-night/test.html</code> — การทดสอบจากไฟล์ในเครื่องจะถูก Firebase ปฏิเสธเสมอ");
+  }else{
+    add("ok","1. เปิดจากเว็บจริง", "ที่อยู่: <code>" + location.href + "</code>");
+  }
+
+  /* 2 — config.js โหลดมาหรือยัง */
+  if(!window.EXN){
+    add("bad","2. โหลด config.js ไม่สำเร็จ",
+      "เบราว์เซอร์หาไฟล์ config.js ไม่เจอ",
+      "<b>วิธีแก้:</b> ตรวจว่าไฟล์ <code>config.js</code> อยู่ในโฟลเดอร์เดียวกับหน้านี้บน GitHub และชื่อสะกดตรงกันทุกตัวอักษร");
+    run.disabled = false; run.textContent = "ตรวจอีกครั้ง"; return;
+  }
+  add("ok","2. โหลด config.js สำเร็จ", "อ่านค่าตั้งได้แล้ว");
+
+  /* 3 — URL ที่ใส่ไว้ */
+  const raw = (window.EXN.db && window.EXN.db.url || "").trim();
+  if(!raw){
+    add("bad","3. ยังไม่ได้ใส่ Database URL",
+      "ค่า <code>db.url</code> ยังว่างอยู่ ระบบจึงทำงานในโหมดเดโม ข้อมูลไม่ถูกส่งไป Firebase",
+      "<b>วิธีแก้:</b> เปิด config.js บน GitHub → กดดินสอ → ใส่ URL ในเครื่องหมายคำพูด → กด Commit changes → รอ 1 นาที แล้วกดตรวจใหม่");
+    run.disabled = false; run.textContent = "ตรวจอีกครั้ง"; return;
+  }
+  const url = raw.replace(/\/$/,"");
+  let warn = "";
+  if(!/^https:\/\//.test(url)) warn += "URL ต้องขึ้นต้นด้วย https:// · ";
+  if(!/firebasedatabase\.app$|firebaseio\.com$/.test(url)) warn += "URL ควรลงท้ายด้วย .firebasedatabase.app · ";
+  if(/\.json$/.test(url)) warn += "ห้ามมี .json ต่อท้าย · ";
+  add(warn ? "warn" : "ok","3. Database URL", "<code>"+url+"</code>" + (warn ? "<br>⚠️ "+warn : ""));
+
+  const path = window.EXN.db.path || "rsvps";
+  const auth = window.EXN.db.auth ? "?auth="+window.EXN.db.auth : "";
+  const q = p => url + "/" + p + ".json" + auth;
+
+  /* 4 — อ่านข้อมูล */
+  let readOK = false;
+  try{
+    const r = await fetch(q(path));
+    const text = await r.text();
+    if(r.ok){
+      readOK = true;
+      let n = 0;
+      try{ const j = JSON.parse(text); n = j ? Object.keys(j).length : 0; }catch(e){}
+      add("ok","4. อ่านข้อมูลได้", "พบข้อมูลในกิ่ง <code>"+path+"</code> จำนวน <b>"+n+"</b> รายการ" +
+        (n===0 ? "<br>ยังไม่มีใครกรอกฟอร์มเข้ามา (หรือข้อมูลเดิมถูกส่งตอนที่ยังไม่ได้ตั้งค่า)" : ""));
+    }else if(r.status === 401){
+      add("bad","4. อ่านข้อมูลไม่ได้ — Permission denied (401)",
+        "Firebase ปฏิเสธการเข้าถึง",
+        "<b>วิธีแก้:</b> Firebase console → Realtime Database → แท็บ <b>Rules</b> วางตามนี้แล้วกด <b>Publish</b><br>"+
+        "<code>{ \"rules\": { \"rsvps\": { \".read\": true, \".write\": true } } }</code>");
+    }else if(r.status === 404){
+      add("bad","4. อ่านข้อมูลไม่ได้ — ไม่พบฐานข้อมูล (404)",
+        "URL ชี้ไปที่ database ที่ไม่มีอยู่",
+        "<b>วิธีแก้:</b> ก๊อป URL จากแถบด้านบนของแท็บ Data ใน Firebase มาใหม่ ระวังสับสนกับ Firestore — ต้องเป็น <b>Realtime Database</b> เท่านั้น");
+    }else{
+      add("bad","4. อ่านข้อมูลไม่ได้ (HTTP "+r.status+")", text.slice(0,300));
+    }
+  }catch(e){
+    add("bad","4. เชื่อมต่อไม่ได้เลย",
+      "ข้อความจากเบราว์เซอร์: <code>"+e.message+"</code>",
+      "<b>สาเหตุที่เป็นไปได้:</b> URL พิมพ์ผิด · ไม่มีอินเทอร์เน็ต · หรือ URL เป็น Firestore ไม่ใช่ Realtime Database");
+  }
+
+  /* 5 — เขียนข้อมูล */
+  if(readOK){
+    try{
+      const r = await fetch(q("_connectiontest"), {method:"PUT",headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({at:new Date().toISOString(), from:location.host})});
+      if(r.ok){
+        add("ok","5. เขียนข้อมูลได้",
+          "ทดสอบเขียนสำเร็จ ระบบพร้อมรับลงทะเบียนแล้ว<br>ไปดูใน Firebase แท็บ Data จะเห็นกิ่งชื่อ <code>_connectiontest</code>",
+          "ลบกิ่ง <code>_connectiontest</code> ทิ้งได้เลยหลังตรวจเสร็จ");
+      }else{
+        const t = await r.text();
+        add("bad","5. เขียนข้อมูลไม่ได้ (HTTP "+r.status+")", t.slice(0,300),
+          "<b>วิธีแก้:</b> ใน Rules ต้องมี <code>\".write\": true</code> และกด Publish แล้ว");
+      }
+    }catch(e){
+      add("bad","5. เขียนข้อมูลไม่ได้", "<code>"+e.message+"</code>");
+    }
+  }
+
+  run.disabled = false; run.textContent = "ตรวจอีกครั้ง";
+};
+</script>
+</body>
+</html>

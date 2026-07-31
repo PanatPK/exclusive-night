@@ -6,7 +6,7 @@
 <title>THE EX-CLUSIVE NIGHT — STIEBEL ELTRON</title>
 <style>
   :root{
-    --se-red:#E2001A; --ink:#111111; --ink-soft:#4A4A4A; --grey:#909195;
+    --se-red:#C2272D; --ink:#111111; --ink-soft:#4A4A4A; --grey:#909195;
     --line:#D9D9D9; --paper:#FFFFFF; --shell:#EDEDED; --accent:#6E6E73;
     --font-display:"Times New Roman","Georgia",serif;
     --font-ui:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","Noto Sans Thai","Sarabun",Arial,sans-serif;
@@ -30,10 +30,11 @@
 
   /* ---------- LOGO ---------- */
   .brandbar{padding:24px 26px 0;text-align:center;flex:none}
-  .logo{display:inline-block;background:#fff;border:1px solid #1a1a1a;padding:5px 11px 4px}
-  .logo b{display:block;font-size:13.5px;font-weight:800;letter-spacing:-.01em;line-height:1.15;
-          white-space:nowrap}
-  .logo i{display:block;height:3.5px;background:var(--se-red);margin-top:3px}
+  .logo{display:inline-block;background:#fff;padding:4px 7px}
+  .logo b{display:block;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+          font-size:15px;font-weight:900;color:#000;letter-spacing:-.025em;
+          line-height:1.06;white-space:nowrap;margin:2.5px 0}
+  .logo i{display:block;height:2px;background:#C2272D}
 
   /* ---------- SOFTCUBE DIAL ---------- */
   .knobzone{flex:none;padding:18px 26px 0;display:flex;flex-direction:column;align-items:center}
@@ -76,9 +77,10 @@
   .cube .ic.th{right:20%;top:73%}
 
   .cubelogo{position:absolute;left:50%;bottom:6.5%;transform:translateX(-50%);z-index:4;text-align:center}
-  .cubelogo b{display:block;font-size:clamp(8px,3.3vw,11px);font-weight:800;color:#fff;
-              letter-spacing:-.01em;line-height:1.1;white-space:nowrap}
-  .cubelogo i{display:block;height:2px;background:#fff;margin-top:2px}
+  .cubelogo b{display:block;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+              font-size:clamp(8px,3.4vw,11.5px);font-weight:900;color:#fff;
+              letter-spacing:-.025em;line-height:1.06;white-space:nowrap;margin:1.5px 0}
+  .cubelogo i{display:block;height:1.6px;background:#fff}
 
   .hint{margin-top:14px;font-size:11px;letter-spacing:.16em;color:var(--grey);text-transform:uppercase;
         text-align:center;height:15px;transition:opacity .4s ease}
@@ -200,7 +202,7 @@
 <div class="stage"><div class="phone"><div class="screen">
 
   <div class="brandbar">
-    <div class="logo"><b>STIEBEL ELTRON</b><i></i></div>
+    <div class="logo"><i></i><b>STIEBEL ELTRON</b><i></i></div>
   </div>
 
   <div class="knobzone">
@@ -212,7 +214,7 @@
           <linearGradient id="heatgrad" gradientUnits="userSpaceOnUse" x1="51" y1="180" x2="189" y2="180">
             <stop offset="0" stop-color="#1E5AFF"/><stop offset=".3" stop-color="#00B3D6"/>
             <stop offset=".55" stop-color="#FFB020"/><stop offset=".8" stop-color="#FF5A1F"/>
-            <stop offset="1" stop-color="#E2001A"/>
+            <stop offset="1" stop-color="#C2272D"/>
           </linearGradient>
         </defs>
         <path class="track" pathLength="100" d="M 51.19 168.18 A 84 84 0 1 1 188.81 168.18"/>
@@ -221,7 +223,7 @@
       <div class="knob" id="knob"><span class="mark" id="mark"></span></div>
       <svg class="ic pw" viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg>
       <svg class="ic th" viewBox="0 0 24 24"><path d="M14 14.8V4a2 2 0 0 0-4 0v10.8a4 4 0 1 0 4 0z"/></svg>
-      <div class="cubelogo"><b>STIEBEL ELTRON</b><i></i></div>
+      <div class="cubelogo"><i></i><b>STIEBEL ELTRON</b><i></i></div>
     </div>
     <p class="hint" id="hint">หมุนลูกบิดเพื่อเปิดคำเชิญ</p>
   </div>
@@ -323,7 +325,7 @@ const STOPS=[
   {label:"DATE",      color:"#00B3D6"},
   {label:"VENUE",     color:"#FFB020"},
   {label:"DRESS",     color:"#FF5A1F"},
-  {label:"RSVP",      color:"#E2001A"}
+  {label:"RSVP",      color:"#C2272D"}
 ];
 const N=STOPS.length, SWEEP=250, STEP=SWEEP/(N-1), MIN=-125, MAX=125;
 

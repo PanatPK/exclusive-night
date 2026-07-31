@@ -5,16 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RSVP DASHBOARD — THE EX-CLUSIVE NIGHT</title>
 <style>
-  :root{--se-red:#E2001A;--ink:#111;--soft:#4A4A4A;--grey:#909195;--line:#E2E2E4;--bg:#F4F4F5;
+  :root{--se-red:#C2272D;--ink:#111;--soft:#4A4A4A;--grey:#909195;--line:#E2E2E4;--bg:#F4F4F5;
         --ok:#0F9D58;--font-ui:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","Noto Sans Thai","Sarabun",Arial,sans-serif}
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);font-family:var(--font-ui);color:var(--ink)}
   .wrap{max-width:1040px;margin:0 auto;padding:26px 20px 60px}
 
   .top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:6px}
-  .logo{display:inline-block;background:#fff;border:1px solid #1a1a1a;padding:5px 11px 4px}
-  .logo b{display:block;font-size:13px;font-weight:800;letter-spacing:-.01em;line-height:1.15}
-  .logo i{display:block;height:3.5px;background:var(--se-red);margin-top:3px}
+  .logo{display:inline-block;background:#fff;padding:4px 7px}
+  .logo b{display:block;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+          font-size:14px;font-weight:900;color:#000;letter-spacing:-.025em;
+          line-height:1.06;white-space:nowrap;margin:2.5px 0}
+  .logo i{display:block;height:2px;background:#C2272D}
   .top h1{margin:0;font-size:13px;letter-spacing:.22em;font-weight:800}
   .top h1 span{display:block;font-size:9.5px;letter-spacing:.14em;color:var(--grey);font-weight:400;margin-top:4px}
   .status{margin-left:auto;display:flex;align-items:center;gap:9px;font-size:10.5px;letter-spacing:.12em;color:var(--grey)}
@@ -64,7 +66,7 @@
 <div class="wrap">
 
   <div class="top">
-    <div class="logo"><b>STIEBEL ELTRON</b><i></i></div>
+    <div class="logo"><i></i><b>STIEBEL ELTRON</b><i></i></div>
     <h1>RSVP DASHBOARD<span>THE EX-CLUSIVE NIGHT · 6 OCT 2026</span></h1>
     <div class="status"><span class="live" id="liveDot"></span><span id="liveText">กำลังเชื่อมต่อ…</span></div>
   </div>

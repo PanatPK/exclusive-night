@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
 <title>CHECK-IN SCANNER — THE EX-CLUSIVE NIGHT</title>
 <style>
-  :root{--se-red:#E2001A;--ok:#0F9D58;--warn:#F5A623;--ink:#111;--grey:#8A8A8E;--line:#2A2A2E;
+  :root{--se-red:#C2272D;--ok:#0F9D58;--warn:#F5A623;--ink:#111;--grey:#8A8A8E;--line:#2A2A2E;
         --font-ui:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","Noto Sans Thai","Sarabun",Arial,sans-serif}
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{height:100%}
@@ -15,9 +15,11 @@
 
   header{flex:none;padding:14px 18px calc(14px);border-bottom:1px solid var(--line);
          display:flex;align-items:center;gap:12px}
-  .logo{background:#fff;border:1px solid #1a1a1a;padding:4px 9px 3px;flex:none}
-  .logo b{display:block;font-size:11px;font-weight:800;letter-spacing:-.01em;color:#111;line-height:1.15}
-  .logo i{display:block;height:3px;background:var(--se-red);margin-top:2px}
+  .logo{background:#fff;padding:4px 6px;flex:none}
+  .logo b{display:block;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+          font-size:12.5px;font-weight:900;color:#000;letter-spacing:-.025em;
+          line-height:1.06;white-space:nowrap;margin:2px 0}
+  .logo i{display:block;height:1.8px;background:#C2272D}
   header h1{margin:0;font-size:10px;letter-spacing:.2em;font-weight:800}
   header h1 span{display:block;font-size:8.5px;letter-spacing:.12em;color:var(--grey);font-weight:400;margin-top:4px}
   .count{margin-left:auto;text-align:right}
@@ -34,6 +36,11 @@
   @keyframes sweep{0%,100%{top:20%}50%{top:80%}}
   .camnote{position:absolute;left:0;right:0;bottom:14px;text-align:center;font-size:10.5px;
            letter-spacing:.14em;color:rgba(255,255,255,.7)}
+  .camtools{position:absolute;left:0;right:0;bottom:40px;display:none;gap:8px;justify-content:center;
+            align-items:center;flex-wrap:wrap;padding:0 14px;z-index:6}
+  .camtools button{border:1px solid rgba(255,255,255,.55);background:rgba(0,0,0,.5);color:#fff;
+    font-family:inherit;font-size:10px;letter-spacing:.12em;padding:9px 15px;border-radius:99px;cursor:pointer}
+  .camtools span{font-size:9.5px;color:rgba(255,255,255,.6);width:100%;text-align:center}
   .starter{position:absolute;inset:0;display:grid;place-items:center;background:#0A0A0B;padding:30px;text-align:center}
   .starter p{color:var(--grey);font-size:12.5px;line-height:1.9;margin:0 0 22px}
 
@@ -43,7 +50,7 @@
   .result.show{display:flex}
   .result.ok{background:rgba(15,157,88,.96)}
   .result.dup{background:rgba(245,166,35,.96);color:#1a1a1a}
-  .result.bad{background:rgba(226,0,26,.96)}
+  .result.bad{background:rgba(194,39,45,.96)}
   .result .mark{font-size:52px;line-height:1;margin-bottom:6px}
   .result h2{margin:0;font-size:24px;font-weight:700}
   .result .meta{font-size:13px;opacity:.92;line-height:1.8;margin:0}
@@ -76,14 +83,19 @@
 <div class="app">
 
   <header>
-    <div class="logo"><b>STIEBEL ELTRON</b><i></i></div>
+    <div class="logo"><i></i><b>STIEBEL ELTRON</b><i></i></div>
     <h1>CHECK-IN<span id="counterName">COUNTER 1</span></h1>
     <div class="count"><b id="cIn">0</b><em>CHECKED IN</em></div>
   </header>
 
   <div class="camwrap" id="camwrap">
-    <video id="video" playsinline muted></video>
+    <video id="video" playsinline autoplay muted></video>
     <div class="frame"><div class="box"><span class="scanline"></span></div></div>
+    <div class="camtools" id="camtools">
+      <button id="flip">สลับกล้อง</button>
+      <button id="restart">เปิดกล้องใหม่</button>
+      <span id="caminfo"></span>
+    </div>
     <p class="camnote">วาง QR ของแขกให้อยู่ในกรอบ</p>
 
     <div class="starter" id="starter">
@@ -226,53 +238,104 @@ let detector = null, lastText = "", lastAt = 0;
 
 function camError(title, fix){
   starter.style.display = "grid";
+  camtools.style.display = "none";
   starter.innerHTML = `<div>
     <p><b style="color:#fff;font-size:14px;letter-spacing:.02em">${title}</b><br><br>${fix}<br>
     <span style="font-size:11px">ระหว่างนี้ใช้ช่องค้นหาชื่อด้านล่างเช็คอินได้ตามปกติ</span></p>
     <button class="btn" id="retryBtn" style="max-width:250px;margin:0 auto">ลองเปิดกล้องอีกครั้ง</button></div>`;
-  document.getElementById("retryBtn").onclick = startCam;
+  document.getElementById("retryBtn").onclick = ()=> startCam();
 }
 
-async function startCam(){
+let stream = null, cams = [], camIdx = 0;
+
+function stopStream(){
+  if(stream){ stream.getTracks().forEach(t=>t.stop()); stream = null; }
+}
+
+async function startCam(deviceId){
   if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia)
     return camError("เบราว์เซอร์นี้เปิดกล้องไม่ได้",
       "ลองเปิดด้วย Chrome บนแอนดรอยด์ หรือ Safari บน iPhone");
   if(!window.isSecureContext)
     return camError("หน้านี้ไม่ได้เปิดผ่าน https",
-      "ที่อยู่ตอนนี้คือ <code style='font-size:11px'>"+location.origin+"</code><br>ต้องเปิดผ่านลิงก์ github.io เท่านั้น กล้องถึงจะทำงาน");
+      "ที่อยู่ตอนนี้คือ <code style='font-size:11px'>"+location.origin+"</code><br>ต้องเปิดผ่านลิงก์ github.io เท่านั้น");
 
+  stopStream();
   try{
-    let stream;
+    const want = deviceId ? {deviceId:{exact:deviceId}} : {facingMode:{ideal:"environment"}};
     try{
-      stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}}});
+      stream = await navigator.mediaDevices.getUserMedia({video:want});
     }catch(e1){
-      stream = await navigator.mediaDevices.getUserMedia({video:true});   /* เครื่องที่มีกล้องเดียว */
+      stream = await navigator.mediaDevices.getUserMedia({video:true});
     }
-    video.srcObject = stream; await video.play();
+    video.srcObject = stream;
+    try{ await video.play(); }catch(e){}
+
     starter.style.display = "none";
+    camtools.style.display = "flex";
+
     if("BarcodeDetector" in window){
       try{ detector = new BarcodeDetector({formats:["qr_code"]}); }catch(e){ detector = null; }
     }
+
+    /* รายชื่อกล้องทั้งหมด (ชื่อจะอ่านได้หลังผู้ใช้อนุญาตแล้วเท่านั้น) */
+    try{
+      const all = await navigator.mediaDevices.enumerateDevices();
+      cams = all.filter(d=>d.kind === "videoinput");
+      const cur = stream.getVideoTracks()[0].getSettings().deviceId;
+      const i = cams.findIndex(c=>c.deviceId === cur);
+      if(i >= 0) camIdx = i;
+      flip.style.display = cams.length > 1 ? "block" : "none";
+    }catch(e){}
+
+    /* ตรวจว่ากล้องส่งภาพออกมาจริงไหม */
+    setTimeout(()=>{
+      const t = stream && stream.getVideoTracks()[0];
+      const label = t ? (t.label || "camera") : "-";
+      caminfo.textContent = video.videoWidth
+        ? label + " · " + video.videoWidth + "×" + video.videoHeight
+        : "กล้องเปิดอยู่แต่ยังไม่มีภาพ";
+      if(!video.videoWidth){
+        camError("กล้องเปิดได้ แต่ภาพไม่ออก",
+          "มักเกิดจาก<b>มีแท็บหรือแอปอื่นใช้กล้องอยู่</b><br><br>"+
+          "1. ปิดแท็บอื่นทั้งหมดในเบราว์เซอร์ (ตอนนี้เปิดอยู่หลายแท็บ)<br>"+
+          "2. ปิดแอปกล้อง LINE Zoom Meet ที่ค้างอยู่<br>"+
+          "3. กดลองใหม่ หรือกดสลับกล้อง");
+      }
+    }, 1800);
+
     requestAnimationFrame(loop);
   }catch(e){
     const map = {
       NotAllowedError:["ยังไม่ได้อนุญาตให้ใช้กล้อง",
-        "กดไอคอนรูปกล้องหรือแม่กุญแจข้างแถบที่อยู่ → เลือก <b>อนุญาต / Allow</b> → โหลดหน้าใหม่<br>บน Mac ถ้ายังไม่ขึ้น ให้ไป System Settings → Privacy & Security → Camera แล้วเปิดสิทธิ์ให้เบราว์เซอร์"],
+        "แตะไอคอนซ้ายของแถบที่อยู่ → สิทธิ์ → กล้อง → อนุญาต แล้วโหลดหน้าใหม่"],
       NotFoundError:["ไม่พบกล้องในเครื่องนี้",
-        "เครื่องนี้ไม่มีกล้องที่ใช้ได้ ให้ย้ายไปเปิดบนมือถือแทน"],
+        "ย้ายไปเปิดบนมือถือที่มีกล้องหลัง"],
       NotReadableError:["กล้องถูกโปรแกรมอื่นใช้อยู่",
-        "ปิดแอปหรือแท็บที่เปิดกล้องค้างไว้ เช่น Zoom, LINE, Google Meet หรือแอปกล้อง แล้วกดลองใหม่"],
-      OverconstrainedError:["ไม่พบกล้องหลัง",
-        "กดลองใหม่อีกครั้ง ระบบจะสลับไปใช้กล้องที่มีให้อัตโนมัติ"],
+        "ปิดแท็บอื่นในเบราว์เซอร์ และปิดแอปที่เปิดกล้องค้างไว้ เช่น LINE Zoom Meet แล้วกดลองใหม่"],
+      OverconstrainedError:["ไม่พบกล้องที่ตรงเงื่อนไข",
+        "กดลองใหม่ ระบบจะเลือกกล้องที่มีให้อัตโนมัติ"],
       SecurityError:["เบราว์เซอร์บล็อกการใช้กล้อง",
-        "ตรวจการตั้งค่าความเป็นส่วนตัวของเบราว์เซอร์ แล้วกดลองใหม่"],
-      AbortError:["เปิดกล้องไม่สำเร็จ", "กดลองใหม่อีกครั้ง"]
+        "ตรวจการตั้งค่าความเป็นส่วนตัวของเบราว์เซอร์"],
+      AbortError:["เปิดกล้องไม่สำเร็จ","กดลองใหม่อีกครั้ง"]
     };
-    const m = map[e.name] || ["เปิดกล้องไม่ได้", "รหัสข้อผิดพลาด: <code style='font-size:11px'>"+e.name+" — "+e.message+"</code>"];
+    const m = map[e.name] || ["เปิดกล้องไม่ได้",
+      "รหัสข้อผิดพลาด: <code style='font-size:11px'>"+e.name+" — "+e.message+"</code>"];
     camError(m[0], m[1]);
   }
 }
-startBtn.onclick = startCam;
+
+flip.onclick = ()=>{
+  if(cams.length < 2) return startCam();
+  camIdx = (camIdx + 1) % cams.length;
+  startCam(cams[camIdx].deviceId);
+};
+restart.onclick = ()=> startCam();
+document.addEventListener("visibilitychange", ()=>{
+  if(document.hidden) stopStream();
+  else if(starter.style.display === "none") startCam(cams[camIdx] && cams[camIdx].deviceId);
+});
+startBtn.onclick = ()=> startCam();
 
 async function loop(){
   if(video.readyState === video.HAVE_ENOUGH_DATA && !busy){

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1">
+<title>THE EX-CLUSIVE NIGHT — STIEBEL ELTRON</title>
+<style>
+  :root{
+    --se-red:#E2001A; --ink:#111111; --ink-soft:#4A4A4A; --grey:#909195;
+    --line:#D9D9D9; --paper:#FFFFFF; --shell:#EDEDED; --accent:#6E6E73;
+    --font-display:"Times New Roman","Georgia",serif;
+    --font-ui:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","Noto Sans Thai","Sarabun",Arial,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{margin:0;font-family:var(--font-ui);background:var(--shell);color:var(--ink);
+       display:flex;align-items:center;justify-content:center;overflow:hidden}
+
+  .stage{width:100%;height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px}
+  .phone{position:relative;width:100%;max-width:404px;height:min(870px,calc(100dvh - 40px));
+         background:#0d0d0d;border-radius:46px;padding:11px;
+         box-shadow:0 30px 70px rgba(0,0,0,.28),0 2px 6px rgba(0,0,0,.2)}
+  .screen{position:relative;width:100%;height:100%;background:var(--paper);
+          border-radius:36px;overflow:hidden;display:flex;flex-direction:column}
+  @media (max-width:520px){
+    .stage{padding:0}
+    .phone{max-width:none;height:100dvh;border-radius:0;padding:0;box-shadow:none}
+    .screen{border-radius:0}
+  }
+
+  /* ---------- LOGO ---------- */
+  .brandbar{padding:24px 26px 0;text-align:center;flex:none}
+  .logo{display:inline-block;background:#fff;border:1px solid #1a1a1a;padding:5px 11px 4px}
+  .logo b{display:block;font-size:13.5px;font-weight:800;letter-spacing:-.01em;line-height:1.15;
+          white-space:nowrap}
+  .logo i{display:block;height:3.5px;background:var(--se-red);margin-top:3px}
+
+  /* ---------- SOFTCUBE DIAL ---------- */
+  .knobzone{flex:none;padding:18px 26px 0;display:flex;flex-direction:column;align-items:center}
+  .cube{position:relative;width:min(230px,58vw);aspect-ratio:1;border-radius:26%;
+        background:linear-gradient(158deg,#3a3a3d 0%,#1a1a1c 30%,#0b0b0c 62%,#151517 100%);
+        box-shadow:0 22px 40px rgba(0,0,0,.34),0 3px 8px rgba(0,0,0,.25),
+                   inset 0 1px 1px rgba(255,255,255,.22),inset 0 -12px 26px rgba(0,0,0,.6);
+        touch-action:none;cursor:grab}
+  .cube:active{cursor:grabbing}
+  .cube svg.ring{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  .track{fill:none;stroke:rgba(255,255,255,.85);stroke-width:2.2;stroke-linecap:round}
+  .heat{fill:none;stroke:url(#heatgrad);stroke-width:4.6;stroke-linecap:round;
+        stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset .05s linear;
+        filter:drop-shadow(0 0 6px rgba(255,255,255,.22))}
+  .tick{fill:rgba(255,255,255,.3);transition:fill .3s ease}
+  .tick.on{fill:var(--accent)}
+  .offlabel{fill:rgba(255,255,255,.55);font-size:9px;letter-spacing:.18em;font-family:var(--font-ui);
+            font-weight:600;transition:fill .3s}
+  .offlabel.live{fill:#fff}
+
+  .knob{position:absolute;inset:23%;border-radius:50%;
+        background:radial-gradient(circle at 50% 30%,#4d4d50 0%,#2b2b2d 40%,#161618 72%,#0a0a0b 100%);
+        box-shadow:0 8px 18px rgba(0,0,0,.5),inset 0 1px 1px rgba(255,255,255,.3),
+                   inset 0 -8px 18px rgba(0,0,0,.6)}
+  .knob::after{content:"";position:absolute;inset:8%;border-radius:50%;
+    background:conic-gradient(from 200deg,#3f3f42,#0f0f10,#3a3a3d,#101011,#3f3f42);opacity:.9}
+  .knob::before{content:"";position:absolute;inset:34%;border-radius:50%;z-index:2;
+    background:radial-gradient(circle at 50% 35%,#2e2e31,#111113);
+    box-shadow:inset 0 1px 2px rgba(255,255,255,.14)}
+  .mark{position:absolute;top:7%;left:50%;width:3px;height:20%;transform:translateX(-50%);
+        border-radius:2px;background:#fff;z-index:3;transition:box-shadow .35s}
+  .mark.live{box-shadow:0 0 9px color-mix(in srgb,var(--accent) 85%,transparent)}
+  .cube .ic{position:absolute;width:19px;height:19px;stroke:#fff;fill:none;stroke-width:1.9;
+            stroke-linecap:round;opacity:.85;z-index:4}
+  .cube .ic.pw{left:13%;bottom:12%}
+  .cube .ic.th{right:13%;bottom:12%}
+
+  .hint{margin-top:14px;font-size:11px;letter-spacing:.16em;color:var(--grey);text-transform:uppercase;
+        text-align:center;height:15px;transition:opacity .4s ease}
+  .hint.gone{opacity:0}
+
+  .dots{display:flex;gap:6px;justify-content:center;margin-top:10px;flex:none;padding:0 24px}
+  .dot{width:100%;max-width:48px;height:26px;border:0;background:none;padding:0;cursor:pointer;
+       display:flex;flex-direction:column;align-items:center;gap:5px}
+  .dot i{display:block;width:100%;height:2px;background:var(--line);transition:background .3s}
+  .dot em{font-style:normal;font-size:8px;letter-spacing:.08em;color:var(--line);transition:color .3s}
+  .dot.on i{background:var(--accent)}
+  .dot.on em{color:var(--ink)}
+  .dot.past i{background:color-mix(in srgb,var(--accent) 45%,#fff)}
+
+  .panel{flex:1;min-height:0;overflow-y:auto;padding:16px 30px 18px;-webkit-overflow-scrolling:touch}
+  .card{animation:rise .45s cubic-bezier(.2,.7,.3,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  /* OFF state */
+  .off{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+  .off .stand{width:1px;height:26px;background:var(--line)}
+  .off p{margin:0;font-size:11px;letter-spacing:.2em;color:#C4C4C6;text-align:center}
+  .off p.th{font-size:12.5px;letter-spacing:.02em;color:var(--grey)}
+
+  .eyebrow{font-size:9.5px;letter-spacing:.28em;color:var(--grey);text-align:center;margin-bottom:12px}
+  .display{font-family:var(--font-display);text-align:center;line-height:.95;margin:0;letter-spacing:.02em}
+  .display .pre{display:block;font-size:.34em;letter-spacing:.34em;color:var(--ink-soft);margin-bottom:8px;
+                font-family:var(--font-ui);font-weight:600}
+  .display .red{color:var(--se-red);display:block;font-size:.68em;letter-spacing:.2em;margin-top:6px}
+  .quote{text-align:center;font-size:10px;line-height:1.75;letter-spacing:.06em;color:var(--ink-soft);
+         margin:16px auto 0;max-width:280px}
+  .quote u{color:var(--se-red);text-decoration-color:var(--se-red);text-underline-offset:3px}
+  .thai{text-align:center;font-size:13px;line-height:1.85;color:var(--ink-soft);margin-top:14px}
+
+  .row{display:flex;gap:14px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--line)}
+  .row:last-of-type{border-bottom:0}
+  .row svg{flex:none;width:19px;height:19px;stroke:var(--ink);fill:none;stroke-width:1.5;margin-top:2px}
+  .row .k{font-size:9.5px;letter-spacing:.2em;color:var(--grey);margin-bottom:5px}
+  .row .v{font-size:15px;font-weight:600;line-height:1.45}
+  .row .v small{display:block;font-weight:400;font-size:12.5px;color:var(--ink-soft);margin-top:3px;letter-spacing:0}
+  .row .v .hot{color:var(--se-red)}
+  .maplink{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;letter-spacing:.1em;
+           color:var(--se-red);text-decoration:none;font-weight:700;
+           border-bottom:1px solid color-mix(in srgb,var(--se-red) 35%,#fff);padding-bottom:2px}
+
+  .swatches{display:flex;gap:9px;justify-content:center;margin:18px 0 4px}
+  .sw{width:42px;height:42px;border-radius:50%;border:1px solid var(--line)}
+  .sw span{display:block;margin-top:48px;font-size:8px;letter-spacing:.1em;color:var(--grey);text-align:center;white-space:nowrap}
+
+  .codebox{border:1.5px solid var(--se-red);border-radius:2px;padding:9px 0;text-align:center;
+           font-size:19px;font-weight:700;letter-spacing:.16em;color:var(--se-red);margin:4px 0 16px}
+  .codelabel{font-size:9px;letter-spacing:.24em;color:var(--grey);text-align:center;margin-bottom:7px}
+  .qrwrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+  #qr{width:116px;height:116px;display:grid;place-items:center;background:#fff}
+  #qr img,#qr canvas{width:116px !important;height:116px !important;display:block}
+  .qrcap{font-size:8.5px;letter-spacing:.22em;color:var(--grey)}
+
+  .btn{display:block;width:100%;border:0;border-radius:2px;padding:15px;cursor:pointer;font-family:inherit;
+       font-size:12px;font-weight:700;letter-spacing:.18em;background:var(--se-red);color:#fff;transition:transform .12s}
+  .btn:active{transform:scale(.985)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+  .btn.mini{padding:12px;font-size:11px;letter-spacing:.14em}
+  .btnstack{display:flex;flex-direction:column;gap:9px;margin-top:18px}
+
+  .foot{flex:none;padding:10px 26px calc(14px + env(safe-area-inset-bottom));border-top:1px solid var(--line);
+        display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .foot p{margin:0;font-size:8.5px;letter-spacing:.2em;color:var(--grey);flex:1;text-align:center}
+  .foot p u{color:var(--se-red);text-decoration-color:var(--se-red)}
+  .sound{border:0;background:none;padding:6px;cursor:pointer;color:var(--grey);line-height:0}
+  .sound svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6}
+
+  .sheet{position:absolute;inset:0;background:var(--paper);z-index:20;display:flex;flex-direction:column;
+         transform:translateY(100%);transition:transform .42s cubic-bezier(.2,.75,.25,1)}
+  .sheet.open{transform:none}
+  .sheethead{flex:none;padding:24px 26px 14px;border-bottom:1px solid var(--line);
+             display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .sheethead h2{margin:0;font-size:12px;letter-spacing:.24em;font-weight:800}
+  .sheethead h2 span{display:block;font-size:9px;letter-spacing:.16em;color:var(--grey);font-weight:400;margin-top:5px}
+  .x{border:0;background:none;font-size:22px;line-height:1;color:var(--grey);cursor:pointer;padding:0 2px}
+  .sheetbody{flex:1;min-height:0;overflow-y:auto;padding:20px 26px 26px}
+
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:9.5px;letter-spacing:.2em;color:var(--grey);margin-bottom:7px}
+  .field label b{color:var(--se-red)}
+  .field input,.field textarea{width:100%;font-family:inherit;font-size:15px;color:var(--ink);border:0;
+    border-bottom:1.5px solid var(--line);background:transparent;padding:7px 0;border-radius:0;outline:none;
+    transition:border-color .2s}
+  .field textarea{resize:none;min-height:52px}
+  .field input:focus,.field textarea:focus{border-color:var(--se-red)}
+  .field.err input,.field.err textarea{border-color:var(--se-red)}
+  .field .msg{font-size:10.5px;color:var(--se-red);margin-top:6px;display:none}
+  .field.err .msg{display:block}
+  .choice{display:flex;gap:9px}
+  .choice button{flex:1;padding:13px 8px;border:1.5px solid var(--line);background:#fff;border-radius:2px;
+    font-family:inherit;font-size:11px;letter-spacing:.1em;color:var(--ink-soft);cursor:pointer;transition:all .2s}
+  .choice button[aria-pressed="true"]{border-color:var(--se-red);color:var(--se-red);font-weight:700}
+  .stepper{display:flex;align-items:center;gap:18px}
+  .stepper button{width:38px;height:38px;border:1.5px solid var(--line);background:#fff;border-radius:50%;
+                  font-size:18px;color:var(--ink);cursor:pointer;line-height:1}
+  .stepper output{font-size:22px;font-weight:700;min-width:26px;text-align:center}
+
+  .done{text-align:center;padding:20px 4px}
+  .seal{width:74px;height:74px;margin:6px auto 22px;border-radius:50%;border:1.5px solid var(--se-red);
+        display:grid;place-items:center;animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
+  .seal svg{width:30px;height:30px;stroke:var(--se-red);fill:none;stroke-width:1.8}
+  @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+  .done h3{font-family:var(--font-display);font-size:30px;margin:0 0 6px;letter-spacing:.04em}
+  .done .sub{font-size:12.5px;color:var(--ink-soft);line-height:1.8}
+  .summary{border-top:1px solid var(--line);margin-top:22px;padding-top:6px;text-align:left}
+  .summary div{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);font-size:12.5px}
+  .summary div b{font-weight:600;text-align:right}
+  .summary div span{color:var(--grey);font-size:9.5px;letter-spacing:.16em;padding-top:3px}
+
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+  :focus-visible{outline:2px solid var(--se-red);outline-offset:3px}
+</style>
+</head>
+<body>
+<div class="stage"><div class="phone"><div class="screen">
+
+  <div class="brandbar">
+    <div class="logo"><b>STIEBEL ELTRON</b><i></i></div>
+  </div>
+
+  <div class="knobzone">
+    <div class="cube" id="dialbox" role="slider" tabindex="0"
+         aria-label="หมุนลูกบิดเพื่อเปิดคำเชิญ" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0">
+      <svg class="ring" viewBox="0 0 240 240" aria-hidden="true">
+        <defs>
+          <linearGradient id="heatgrad" gradientUnits="userSpaceOnUse" x1="55" y1="180" x2="185" y2="180">
+            <stop offset="0" stop-color="#1E5AFF"/><stop offset=".3" stop-color="#00B3D6"/>
+            <stop offset=".55" stop-color="#FFB020"/><stop offset=".8" stop-color="#FF5A1F"/>
+            <stop offset="1" stop-color="#E2001A"/>
+          </linearGradient>
+        </defs>
+        <path class="track" pathLength="100" d="M 60.25 170.13 A 78 78 0 1 1 179.75 170.13"/>
+        <path class="heat" id="heatPath" pathLength="100" d="M 60.25 170.13 A 78 78 0 1 1 179.75 170.13"/>
+        <g id="ticks"></g>
+        <text class="offlabel" id="offLabel" x="46" y="188" text-anchor="middle">OFF</text>
+      </svg>
+      <div class="knob" id="knob"><span class="mark" id="mark"></span></div>
+      <svg class="ic pw" viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg>
+      <svg class="ic th" viewBox="0 0 24 24"><path d="M14 14.8V4a2 2 0 0 0-4 0v10.8a4 4 0 1 0 4 0z"/></svg>
+    </div>
+    <p class="hint" id="hint">หมุนลูกบิดเพื่อเปิดคำเชิญ</p>
+  </div>
+
+  <div class="dots" id="dots"></div>
+  <div class="panel" id="panel"></div>
+
+  <div class="foot">
+    <button class="sound" id="soundBtn" aria-label="ปิดเสียง" title="เสียงลูกบิด">
+      <svg viewBox="0 0 24 24" id="soundIcon"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg>
+    </button>
+    <p>YOUR PRESENCE IS PART OF OUR <u>LEGACY</u>.</p>
+    <span style="width:28px"></span>
+  </div>
+
+  <section class="sheet" id="formSheet" aria-hidden="true">
+    <div class="sheethead">
+      <h2>ตอบรับคำเชิญ<span>RSVP — THE EX-CLUSIVE NIGHT</span></h2>
+      <button class="x" id="closeForm" aria-label="ปิด">&times;</button>
+    </div>
+    <div class="sheetbody">
+      <div class="field"><label for="fName">ชื่อ – นามสกุล <b>*</b></label>
+        <input id="fName" type="text" autocomplete="name" placeholder="เช่น สมชาย ใจดี">
+        <p class="msg">กรุณากรอกชื่อ – นามสกุล</p></div>
+      <div class="field"><label for="fCompany">บริษัท / ตำแหน่ง</label>
+        <input id="fCompany" type="text" autocomplete="organization" placeholder="เช่น บจก. ตัวอย่าง / ผู้จัดการฝ่ายขาย"></div>
+      <div class="field"><label for="fPhone">เบอร์โทรศัพท์ <b>*</b></label>
+        <input id="fPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="08X-XXX-XXXX">
+        <p class="msg">กรุณากรอกเบอร์โทรศัพท์ให้ครบ 9–10 หลัก</p></div>
+      <div class="field"><label for="fEmail">อีเมล</label>
+        <input id="fEmail" type="email" autocomplete="email" placeholder="name@company.com">
+        <p class="msg">รูปแบบอีเมลไม่ถูกต้อง</p></div>
+      <div class="field"><label>การเข้าร่วมงาน <b>*</b></label>
+        <div class="choice" id="attendChoice">
+          <button type="button" data-val="yes" aria-pressed="true">เข้าร่วม</button>
+          <button type="button" data-val="no" aria-pressed="false">ไม่สะดวกเข้าร่วม</button>
+        </div></div>
+      <div class="field" id="guestField"><label>จำนวนผู้เข้าร่วม (รวมท่าน)</label>
+        <div class="stepper">
+          <button type="button" id="minus" aria-label="ลดจำนวน">−</button>
+          <output id="guestOut">1</output>
+          <button type="button" id="plus" aria-label="เพิ่มจำนวน">+</button>
+          <span style="font-size:11px;color:var(--grey);letter-spacing:.1em">สูงสุด 2 ท่าน</span>
+        </div></div>
+      <div class="field" id="dietField"><label for="fDiet">อาหารที่แพ้ / ข้อจำกัดด้านอาหาร</label>
+        <textarea id="fDiet" placeholder="เช่น แพ้อาหารทะเล, มังสวิรัติ, ฮาลาล"></textarea></div>
+      <button class="btn" id="submitBtn">ยืนยันการตอบรับ</button>
+      <p style="font-size:10px;color:var(--grey);text-align:center;margin:14px 0 0;line-height:1.7">
+        กรุณาตอบรับภายในวันที่ 25 กันยายน 2026<br>สอบถามเพิ่มเติม 09-8794-9262</p>
+    </div>
+  </section>
+
+  <section class="sheet" id="doneSheet" aria-hidden="true">
+    <div class="sheethead">
+      <h2 id="doneHead">ตอบรับเรียบร้อย<span>CONFIRMED</span></h2>
+      <button class="x" id="closeDone" aria-label="ปิด">&times;</button>
+    </div>
+    <div class="sheetbody"><div class="done">
+      <div class="seal"><svg viewBox="0 0 24 24" id="sealIcon"><path d="M4 12.5 9.5 18 20 6.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h3 id="doneTitle">See you there</h3>
+      <p class="sub" id="doneSub"></p>
+      <div class="summary" id="summary"></div>
+      <div class="btnstack">
+        <button class="btn mini" id="icsBtn">บันทึกลงปฏิทิน</button>
+        <button class="btn ghost mini" id="backBtn">กลับไปหน้าคำเชิญ</button>
+      </div>
+    </div></div>
+  </section>
+
+</div></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="config.js"></script>
+<script>
+/* ===== 1. CONFIG ===== */
+const CONFIG = {
+  dateEN:"TUESDAY 06 OCTOBER 2026",
+  dateTH:"วันอังคารที่ 6 ตุลาคม 2569",
+  timeEN:"18:00 HRS.",
+  timeTH:"ลงทะเบียนและค็อกเทล 17:30 น.",
+  venue:"RENAISSANCE BANGKOK<br>RATCHAPRASONG HOTEL",
+  venueSub:"518/8 ถนนเพลินจิต แขวงลุมพินี<br>เขตปทุมวัน กรุงเทพฯ 10330",
+  mapURL:"https://www.google.com/maps/search/?api=1&query=13.7425121%2C100.5419701&query_place_id=ChIJAQAAANee4jARzKO247hxrLU",
+  parking:"จอดรถได้ที่อาคารจอดรถโรงแรม แจ้งชื่อที่จุดลงทะเบียนเพื่อรับบัตรจอดรถ",
+  dressTH:"ชุดสุภาพโทนขาว ครีม หรือไอวอรี",
+  code:"EX-2026-911",
+  rsvpURL:(window.EXN && window.EXN.rsvpURL) || new URL("rsvp.html", location.href).href,
+  deadline:"25 กันยายน 2026",
+  cal:{start:"20261006T110000Z", end:"20261006T153000Z"}
+};
+const qp = new URLSearchParams(location.search);
+if(qp.get("code")) CONFIG.code = qp.get("code");
+const GUEST_NAME = qp.get("name") || "";
+
+/* ===== 2. หมุด: OFF + 5 หมวด ===== */
+const STOPS=[
+  {label:"OFF",       color:"#6E6E73"},
+  {label:"THE NIGHT", color:"#1E5AFF"},
+  {label:"DATE",      color:"#00B3D6"},
+  {label:"VENUE",     color:"#FFB020"},
+  {label:"DRESS",     color:"#FF5A1F"},
+  {label:"RSVP",      color:"#E2001A"}
+];
+const N=STOPS.length, SWEEP=260, STEP=SWEEP/(N-1), MIN=-130, MAX=130;
+
+const ico={
+  cal:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  clock:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  pin:'<svg viewBox="0 0 24 24"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  car:'<svg viewBox="0 0 24 24"><path d="M5 16h14M4 16v-4l2-5h12l2 5v4"/><circle cx="7.5" cy="17.5" r="1.5"/><circle cx="16.5" cy="17.5" r="1.5"/></svg>'
+};
+
+function render(i){
+  const views=[
+    /* 0 — OFF: ไม่แสดงข้อมูลใด ๆ */
+    `<div class="card off">
+       <p>STANDBY</p><span class="stand"></span>
+       <p class="th">หมุนลูกบิดไปทางขวา<br>เพื่อเปิดรายละเอียดทีละหมวด</p>
+     </div>`,
+
+    /* 1 */
+    `<div class="card">
+      <p class="eyebrow">${GUEST_NAME ? "AN INVITATION FOR "+GUEST_NAME.toUpperCase() : "YOU ARE INVITED TO"}</p>
+      <h1 class="display" style="font-size:clamp(30px,8.6vw,38px)">
+        <span class="pre">THE</span>EX-CLUSIVE<span class="red">NIGHT</span></h1>
+      <p class="quote">"A LEGACY ISN'T JUST WHAT WE <u>ACHIEVE</u>,<br>BUT WHAT WE <u>LEAVE BEHIND</u>."</p>
+      <p class="thai">ค่ำคืนแห่งการขอบคุณคู่ค้าและพันธมิตร<br>ผู้ร่วมสร้างเส้นทางของ STIEBEL ELTRON</p>
+    </div>`,
+
+    /* 2 */
+    `<div class="card">
+      <p class="eyebrow">CHAPTER TWO — WHEN</p>
+      <div class="row">${ico.cal}<div><div class="k">DATE</div>
+        <div class="v"><span class="hot">${CONFIG.dateEN}</span><small>${CONFIG.dateTH}</small></div></div></div>
+      <div class="row">${ico.clock}<div><div class="k">TIME</div>
+        <div class="v">${CONFIG.timeEN}<small>${CONFIG.timeTH}</small></div></div></div>
+      <p class="thai" style="font-size:12px">พิธีการเริ่มเวลา 18:30 น.<br>กรุณามาถึงก่อนเวลาเพื่อความสะดวกในการลงทะเบียน</p>
+    </div>`,
+
+    /* 3 */
+    `<div class="card">
+      <p class="eyebrow">CHAPTER THREE — WHERE</p>
+      <div class="row">${ico.pin}<div><div class="k">VENUE</div>
+        <div class="v">${CONFIG.venue}<small>${CONFIG.venueSub}</small>
+        <a class="maplink" href="${CONFIG.mapURL}" target="_blank" rel="noopener">เปิดแผนที่นำทาง →</a></div></div></div>
+      <div class="row">${ico.car}<div><div class="k">PARKING</div>
+        <div class="v" style="font-weight:400;font-size:13px">${CONFIG.parking}</div></div></div>
+      <p class="thai" style="font-size:11.5px;margin-top:10px">BTS ชิดลม ทางออก 4 เดินเชื่อมสกายวอล์ก 3 นาที</p>
+    </div>`,
+
+    /* 4 */
+    `<div class="card">
+      <p class="eyebrow">CHAPTER FOUR — DRESS CODE</p>
+      <h1 class="display" style="font-size:clamp(28px,8vw,36px);letter-spacing:.06em">ELEGANT<span class="red">WHITE</span></h1>
+      <div class="swatches">
+        <div class="sw" style="background:#FFFFFF"><span>WHITE</span></div>
+        <div class="sw" style="background:#F4F1EA"><span>IVORY</span></div>
+        <div class="sw" style="background:#E4DED2"><span>CREAM</span></div>
+        <div class="sw" style="background:#111111"><span>BLACK</span></div>
+      </div>
+      <p class="thai" style="margin-top:28px">${CONFIG.dressTH}<br>
+        <span style="font-size:11.5px;color:var(--grey)">แตะสีดำได้ที่เครื่องประดับหรือรายละเอียดเล็กน้อย</span></p>
+    </div>`,
+
+    /* 5 */
+    `<div class="card">
+      <p class="codelabel">INVITATION CODE</p>
+      <div class="codebox">${CONFIG.code}</div>
+      <div class="qrwrap"><div id="qr"></div><p class="qrcap">SCAN TO RSVP</p></div>
+      <div class="btnstack"><button class="btn" id="rsvpBtn">ตอบรับคำเชิญ</button></div>
+      <p style="font-size:10.5px;color:var(--grey);text-align:center;margin:14px 0 0;letter-spacing:.04em">
+        กรุณาตอบรับภายในวันที่ ${CONFIG.deadline}</p>
+    </div>`
+  ];
+  panel.innerHTML = views[i];
+  if(i===5){ makeQR(); document.getElementById("rsvpBtn").onclick = openForm; }
+}
+
+/* ===== 3. เสียงลูกบิด ===== */
+let ac=null, master=null, noise=null, muted=false;
+function audio(){
+  if(ac) return ac;
+  ac = new (window.AudioContext||window.webkitAudioContext)();
+  master = ac.createGain(); master.gain.value=.9; master.connect(ac.destination);
+  const len = ac.sampleRate*.12;
+  noise = ac.createBuffer(1,len,ac.sampleRate);
+  const d = noise.getChannelData(0);
+  for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*(1-i/len);
+  return ac;
+}
+function clickSound(soft){
+  if(muted) return;
+  const c=audio(); if(c.state==="suspended") c.resume();
+  const t=c.currentTime, v=soft?.5:1;
+  const s=c.createBufferSource(); s.buffer=noise;
+  const bp=c.createBiquadFilter(); bp.type="bandpass"; bp.frequency.value=2400; bp.Q.value=1.1;
+  const g=c.createGain();
+  g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.30*v,t+.004);
+  g.gain.exponentialRampToValueAtTime(.0001,t+.045);
+  s.connect(bp).connect(g).connect(master); s.start(t); s.stop(t+.06);
+  const o=c.createOscillator(); o.type="sine";
+  o.frequency.setValueAtTime(190,t); o.frequency.exponentialRampToValueAtTime(68,t+.05);
+  const g2=c.createGain(); g2.gain.setValueAtTime(.16*v,t); g2.gain.exponentialRampToValueAtTime(.0001,t+.08);
+  o.connect(g2).connect(master); o.start(t); o.stop(t+.09);
+  if(navigator.vibrate) navigator.vibrate(soft?6:12);
+}
+
+/* ===== 4. ลูกบิด ===== */
+const dialbox=document.getElementById("dialbox"), knob=document.getElementById("knob"),
+      heat=document.getElementById("heatPath"), dotsEl=document.getElementById("dots"),
+      panel=document.getElementById("panel"), hint=document.getElementById("hint"),
+      ticksG=document.getElementById("ticks"), mark=document.getElementById("mark"),
+      offLabel=document.getElementById("offLabel");
+let angle=MIN, index=0, touched=false;
+
+STOPS.forEach((s,i)=>{
+  if(i===0) return;                      /* จุด OFF ใช้ตัวอักษรแทนจุด */
+  const a=(MIN+i*STEP)*Math.PI/180;
+  const c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+  c.setAttribute("cx",120+92*Math.sin(a)); c.setAttribute("cy",120-92*Math.cos(a));
+  c.setAttribute("r",2.6); c.setAttribute("class","tick"); ticksG.appendChild(c);
+});
+STOPS.forEach((s,i)=>{
+  const b=document.createElement("button");
+  b.className="dot"; b.innerHTML=`<i></i><em>${s.label}</em>`;
+  b.setAttribute("aria-label","ไปที่ "+s.label);
+  b.onclick=()=>goTo(i,true); dotsEl.appendChild(b);
+});
+
+function paint(){
+  const on = index>0;
+  heat.style.strokeDashoffset = 100 - ((angle-MIN)/SWEEP)*100;
+  knob.style.transform = `rotate(${angle}deg)`;
+  document.documentElement.style.setProperty("--accent",STOPS[index].color);
+  mark.classList.toggle("live",on);
+  offLabel.classList.toggle("live",!on);
+  ticksG.querySelectorAll(".tick").forEach((t,i)=>t.classList.toggle("on",i+1<=index));
+  dotsEl.querySelectorAll(".dot").forEach((d,i)=>{
+    d.classList.toggle("on",i===index); d.classList.toggle("past",i<index);
+  });
+  dialbox.setAttribute("aria-valuenow",index);
+  dialbox.setAttribute("aria-valuetext",STOPS[index].label);
+}
+function setIndex(i){ if(i===index) return; index=i; clickSound(false); render(i); }
+function goTo(i,animate){
+  i=Math.max(0,Math.min(N-1,i)); markTouched();
+  const target=MIN+i*STEP;
+  if(animate){
+    const from=angle, dur=320, t0=performance.now();
+    const step=now=>{
+      const p=Math.min(1,(now-t0)/dur);
+      angle=from+(target-from)*(1-Math.pow(1-p,3));
+      setIndex(Math.round((angle-MIN)/STEP)); paint();
+      if(p<1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }else{ angle=target; setIndex(i); paint(); }
+}
+function markTouched(){ if(touched) return; touched=true; hint.classList.add("gone"); }
+
+let dragging=false, grabOffset=0;
+const angleOf=e=>{
+  const r=dialbox.getBoundingClientRect();
+  return Math.atan2(e.clientX-(r.left+r.width/2), -(e.clientY-(r.top+r.height/2)))*180/Math.PI;
+};
+dialbox.addEventListener("pointerdown",e=>{
+  dragging=true; dialbox.setPointerCapture(e.pointerId);
+  grabOffset=angleOf(e)-angle; markTouched(); audio();
+});
+dialbox.addEventListener("pointermove",e=>{
+  if(!dragging) return;
+  let a=angleOf(e)-grabOffset;
+  if(a>180) a-=360; if(a<-180) a+=360;
+  angle=Math.max(MIN,Math.min(MAX,a));
+  setIndex(Math.round((angle-MIN)/STEP)); paint();
+});
+const release=()=>{ if(dragging){ dragging=false; goTo(index,true); } };
+dialbox.addEventListener("pointerup",release);
+dialbox.addEventListener("pointercancel",release);
+dialbox.addEventListener("keydown",e=>{
+  if(["ArrowRight","ArrowUp"].includes(e.key)){ goTo(index+1,true); e.preventDefault(); }
+  if(["ArrowLeft","ArrowDown"].includes(e.key)){ goTo(index-1,true); e.preventDefault(); }
+});
+let wheelLock=0;
+dialbox.addEventListener("wheel",e=>{
+  e.preventDefault();
+  const now=Date.now(); if(now-wheelLock<220) return; wheelLock=now;
+  goTo(index+(e.deltaY>0?1:-1),true);
+},{passive:false});
+let sx=0;
+panel.addEventListener("touchstart",e=>sx=e.touches[0].clientX,{passive:true});
+panel.addEventListener("touchend",e=>{
+  const d=e.changedTouches[0].clientX-sx;
+  if(Math.abs(d)>60) goTo(index+(d<0?1:-1),true);
+},{passive:true});
+
+/* ===== 5. QR → หน้าแบบฟอร์ม ===== */
+function makeQR(){
+  const box=document.getElementById("qr"); if(!box) return;
+  box.innerHTML="";
+  const url=CONFIG.rsvpURL+"?code="+encodeURIComponent(CONFIG.code)+(GUEST_NAME?"&name="+encodeURIComponent(GUEST_NAME):"");
+  if(window.QRCode){
+    new QRCode(box,{text:url,width:116,height:116,colorDark:"#111111",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});
+  }else{
+    box.innerHTML=`<div style="width:116px;height:116px;border:1px dashed var(--line);display:grid;place-items:center;
+      font-size:9px;letter-spacing:.14em;color:var(--grey);text-align:center;padding:10px">QR CODE<br>${CONFIG.code}</div>`;
+  }
+}
+
+/* ===== 6. ฟอร์มตอบรับ (ในบัตร) ===== */
+const formSheet=document.getElementById("formSheet"), doneSheet=document.getElementById("doneSheet");
+let attending="yes", guests=1;
+const openForm=()=>{ formSheet.classList.add("open"); formSheet.setAttribute("aria-hidden","false");
+                     if(GUEST_NAME && !fName.value) fName.value=GUEST_NAME; };
+const closeSheet=s=>{ s.classList.remove("open"); s.setAttribute("aria-hidden","true"); };
+document.getElementById("closeForm").onclick=()=>closeSheet(formSheet);
+document.getElementById("closeDone").onclick=()=>{ closeSheet(doneSheet); closeSheet(formSheet); };
+document.getElementById("backBtn").onclick =()=>{ closeSheet(doneSheet); closeSheet(formSheet); };
+
+document.querySelectorAll("#attendChoice button").forEach(b=>{
+  b.onclick=()=>{
+    attending=b.dataset.val;
+    document.querySelectorAll("#attendChoice button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+    const show=attending==="yes"?"block":"none";
+    guestField.style.display=show; dietField.style.display=show;
+    clickSound(true);
+  };
+});
+document.getElementById("plus").onclick =()=>{ if(guests<2){ guests++; guestOut.textContent=guests; clickSound(true);} };
+document.getElementById("minus").onclick=()=>{ if(guests>1){ guests--; guestOut.textContent=guests; clickSound(true);} };
+function bad(el,on){ el.closest(".field").classList.toggle("err",on); return !on; }
+
+document.getElementById("submitBtn").onclick=async()=>{
+  const name=fName.value.trim(), phone=fPhone.value.trim(), email=fEmail.value.trim();
+  let ok=true;
+  ok = bad(fName, name.length<2) && ok;
+  ok = bad(fPhone, phone.replace(/\D/g,"").length<9) && ok;
+  ok = bad(fEmail, email!=="" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) && ok;
+  if(!ok){ document.querySelector(".field.err input").focus(); return; }
+  const record={code:CONFIG.code,name,company:fCompany.value.trim(),phone,email,attending,
+                guests:attending==="yes"?guests:0,diet:fDiet.value.trim(),submittedAt:new Date().toISOString()};
+  try{ await window.storage.set("rsvp:"+CONFIG.code+":"+Date.now(), JSON.stringify(record)); }catch(e){}
+
+  const yes = attending==="yes";
+  doneHead.innerHTML = yes?"ตอบรับเรียบร้อย<span>CONFIRMED</span>":"รับทราบแล้ว<span>NOTED</span>";
+  doneTitle.textContent = yes?"See you there":"Until next time";
+  doneSub.innerHTML = yes
+    ? `ขอบคุณ ${name}<br>เราได้บันทึกการตอบรับของท่านเรียบร้อยแล้ว<br>ทีมงานจะติดต่อยืนยันรายละเอียดอีกครั้ง`
+    : `ขอบคุณ ${name}<br>ที่แจ้งให้เราทราบ แล้วพบกันในโอกาสต่อไป`;
+  document.getElementById("sealIcon").innerHTML = yes
+    ? '<path d="M4 12.5 9.5 18 20 6.5" stroke-linecap="round" stroke-linejoin="round"/>'
+    : '<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 17h.01" stroke-linecap="round"/>';
+  summary.innerHTML =
+    `<div><span>NAME</span><b>${name}</b></div>`+
+    (record.company?`<div><span>COMPANY</span><b>${record.company}</b></div>`:"")+
+    (yes?`<div><span>GUESTS</span><b>${guests} ท่าน</b></div>`:"")+
+    (yes&&record.diet?`<div><span>DIET</span><b>${record.diet}</b></div>`:"")+
+    `<div><span>CODE</span><b>${CONFIG.code}</b></div>`;
+  icsBtn.style.display = yes?"block":"none";
+  doneSheet.classList.add("open"); doneSheet.setAttribute("aria-hidden","false");
+  clickSound(false);
+};
+
+document.getElementById("icsBtn").onclick=()=>{
+  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//QOOKID//EX-CLUSIVE NIGHT//TH","BEGIN:VEVENT",
+    "UID:exclusive-night-"+CONFIG.code+"@qookid.co.th",
+    "DTSTAMP:"+new Date().toISOString().replace(/[-:.]/g,"").slice(0,15)+"Z",
+    "DTSTART:"+CONFIG.cal.start,"DTEND:"+CONFIG.cal.end,
+    "SUMMARY:STIEBEL ELTRON — THE EX-CLUSIVE NIGHT",
+    "LOCATION:Renaissance Bangkok Ratchaprasong Hotel",
+    "DESCRIPTION:Dress code ELEGANT WHITE / Invitation code "+CONFIG.code,
+    "END:VEVENT","END:VCALENDAR"].join("\r\n");
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([ics],{type:"text/calendar"}));
+  a.download="ex-clusive-night-2026.ics"; a.click();
+};
+
+document.getElementById("soundBtn").onclick=function(){
+  muted=!muted;
+  this.style.color = muted?"var(--line)":"var(--grey)";
+  this.setAttribute("aria-label",muted?"เปิดเสียง":"ปิดเสียง");
+  document.getElementById("soundIcon").innerHTML = muted
+    ? '<path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="m16 9 5 6M21 9l-5 6"/>'
+    : '<path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/>';
+  if(!muted) clickSound(true);
+};
+
+render(0); paint();
+</script>
+</body>
+</html>

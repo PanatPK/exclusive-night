@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RSVP DASHBOARD — THE EX-CLUSIVE NIGHT</title>
+<style>
+  :root{--se-red:#E2001A;--ink:#111;--soft:#4A4A4A;--grey:#909195;--line:#E2E2E4;--bg:#F4F4F5;
+        --ok:#0F9D58;--font-ui:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","Noto Sans Thai","Sarabun",Arial,sans-serif}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);font-family:var(--font-ui);color:var(--ink)}
+  .wrap{max-width:1040px;margin:0 auto;padding:26px 20px 60px}
+
+  .top{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+  .logo{display:inline-block;background:#fff;border:1px solid #1a1a1a;padding:5px 11px 4px}
+  .logo b{display:block;font-size:13px;font-weight:800;letter-spacing:-.01em;line-height:1.15}
+  .logo i{display:block;height:3.5px;background:var(--se-red);margin-top:3px}
+  .top h1{margin:0;font-size:13px;letter-spacing:.22em;font-weight:800}
+  .top h1 span{display:block;font-size:9.5px;letter-spacing:.14em;color:var(--grey);font-weight:400;margin-top:4px}
+  .status{margin-left:auto;display:flex;align-items:center;gap:9px;font-size:10.5px;letter-spacing:.12em;color:var(--grey)}
+  .live{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px rgba(15,157,88,.15)}
+  .live.demo{background:#FFB020;box-shadow:0 0 0 4px rgba(255,176,32,.18)}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:22px 0}
+  .card{background:#fff;border:1px solid var(--line);padding:16px 18px}
+  .card em{font-style:normal;display:block;font-size:9px;letter-spacing:.2em;color:var(--grey)}
+  .card b{display:block;font-size:32px;font-weight:700;margin-top:8px;line-height:1}
+  .card b small{font-size:13px;font-weight:400;color:var(--grey);margin-left:5px}
+  .card.hot b{color:var(--se-red)}
+  .bar{height:4px;background:var(--line);margin-top:12px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--se-red);width:0;transition:width .6s}
+
+  .tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  .tools input{flex:1;min-width:190px;padding:11px 13px;border:1px solid var(--line);background:#fff;
+               font-family:inherit;font-size:14px;outline:none}
+  .tools input:focus{border-color:var(--se-red)}
+  .tools button{padding:11px 16px;border:1px solid var(--ink);background:#fff;font-family:inherit;
+                font-size:10.5px;letter-spacing:.14em;font-weight:700;cursor:pointer}
+  .tools button.red{background:var(--se-red);border-color:var(--se-red);color:#fff}
+  .seg{display:flex;border:1px solid var(--line);background:#fff}
+  .seg button{border:0;padding:11px 14px;background:#fff;font-family:inherit;font-size:10.5px;
+              letter-spacing:.1em;color:var(--soft);cursor:pointer}
+  .seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+
+  table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);font-size:13px}
+  th{text-align:left;font-size:9px;letter-spacing:.16em;color:var(--grey);font-weight:600;
+     padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  td .sub{display:block;font-size:11px;color:var(--grey);margin-top:3px}
+  .pill{display:inline-block;font-size:9.5px;letter-spacing:.1em;padding:4px 9px;border:1px solid var(--line);border-radius:99px}
+  .pill.yes{border-color:var(--se-red);color:var(--se-red)}
+  .pill.no{color:var(--grey)}
+  .chk{border:1px solid var(--ink);background:#fff;font-family:inherit;font-size:10px;letter-spacing:.1em;
+       padding:7px 11px;cursor:pointer;white-space:nowrap}
+  .chk.done{background:var(--ok);border-color:var(--ok);color:#fff}
+  .empty{background:#fff;border:1px solid var(--line);padding:50px 20px;text-align:center;color:var(--grey);font-size:13px;line-height:1.9}
+  .setup{background:#FFF8E5;border:1px solid #F0D48A;padding:14px 16px;font-size:12px;line-height:1.8;margin-bottom:20px}
+  .setup code{background:#fff;padding:2px 5px;border:1px solid var(--line);font-size:11.5px}
+  @media (max-width:760px){ .hidesm{display:none} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="logo"><b>STIEBEL ELTRON</b><i></i></div>
+    <h1>RSVP DASHBOARD<span>THE EX-CLUSIVE NIGHT · 6 OCT 2026</span></h1>
+    <div class="status"><span class="live" id="liveDot"></span><span id="liveText">กำลังเชื่อมต่อ…</span></div>
+  </div>
+
+  <div class="setup" id="setup" style="display:none">
+    ยังไม่ได้ตั้งค่าฐานข้อมูล — ตอนนี้แสดงข้อมูลเดโมในเครื่องนี้เท่านั้น
+    ใส่ Database URL ของ Firebase ที่ตัวแปร <code>DB.url</code> ในไฟล์นี้และไฟล์ฟอร์ม ให้ตรงกันทั้งสองไฟล์
+  </div>
+
+  <div class="cards">
+    <div class="card"><em>ตอบกลับทั้งหมด</em><b id="cTotal">0</b></div>
+    <div class="card hot"><em>ยืนยันเข้าร่วม</em><b id="cYes">0</b><div class="bar"><i id="barYes"></i></div></div>
+    <div class="card"><em>จำนวนแขกรวม</em><b id="cHead">0<small>ท่าน</small></b></div>
+    <div class="card"><em>เช็คอินหน้างาน</em><b id="cIn">0<small id="cInPct"></small></b><div class="bar"><i id="barIn"></i></div></div>
+  </div>
+
+  <div class="tools">
+    <input id="search" type="search" placeholder="ค้นหาชื่อ บริษัท เบอร์โทร หรือรหัสบัตร">
+    <div class="seg" id="filter">
+      <button data-f="all" aria-pressed="true">ทั้งหมด</button>
+      <button data-f="yes" aria-pressed="false">เข้าร่วม</button>
+      <button data-f="no" aria-pressed="false">ไม่สะดวก</button>
+      <button data-f="in" aria-pressed="false">เช็คอินแล้ว</button>
+    </div>
+    <button id="refresh">รีเฟรช</button>
+    <button class="red" id="csv">ดาวน์โหลด CSV</button>
+  </div>
+
+  <div id="tableWrap"></div>
+</div>
+
+<script src="config.js"></script>
+<script>
+/* ตั้งค่าให้ตรงกับไฟล์ฟอร์ม */
+const DB = (window.EXN && window.EXN.db) || { url:"", path:"rsvps", auth:"" };
+const q = p => DB.url.replace(/\/$/,"") + "/" + p + ".json" + (DB.auth ? "?auth="+DB.auth : "");
+
+let rows = [], filter = "all", term = "";
+
+async function load(){
+  if(DB.url){
+    try{
+      const r = await fetch(q(DB.path));
+      const data = await r.json() || {};
+      rows = Object.entries(data).map(([key,v]) => ({key, ...v}));
+      liveDot.classList.remove("demo");
+      liveText.textContent = "เชื่อมต่อแล้ว · อัปเดต " + new Date().toLocaleTimeString("th-TH",{hour:"2-digit",minute:"2-digit"});
+    }catch(e){
+      liveDot.classList.add("demo");
+      liveText.textContent = "เชื่อมต่อฐานข้อมูลไม่ได้";
+      rows = [];
+    }
+  }else{
+    setup.style.display = "block";
+    liveDot.classList.add("demo");
+    liveText.textContent = "โหมดเดโม";
+    rows = [];
+    try{
+      const list = await window.storage.list("rsvp:");
+      for(const k of (list?.keys || [])){
+        try{ const it = await window.storage.get(k); rows.push({key:k, ...JSON.parse(it.value)}); }catch(e){}
+      }
+    }catch(e){}
+  }
+  rows.sort((a,b) => (b.submittedAt||"").localeCompare(a.submittedAt||""));
+  draw();
+}
+
+function stats(){
+  const yes  = rows.filter(r => r.attending === "yes");
+  const head = yes.reduce((s,r) => s + (Number(r.guests)||1), 0);
+  const ins  = rows.filter(r => r.checkedIn).length;
+  cTotal.textContent = rows.length;
+  cYes.textContent   = yes.length;
+  cHead.innerHTML    = head + '<small>ท่าน</small>';
+  cIn.innerHTML      = ins + '<small>' + (yes.length ? " / " + yes.length : "") + '</small>';
+  barYes.style.width = rows.length ? (yes.length/rows.length*100)+"%" : "0";
+  barIn.style.width  = yes.length ? (ins/yes.length*100)+"%" : "0";
+}
+
+function draw(){
+  stats();
+  const t = term.trim().toLowerCase();
+  const list = rows.filter(r=>{
+    if(filter==="yes" && r.attending!=="yes") return false;
+    if(filter==="no"  && r.attending==="yes") return false;
+    if(filter==="in"  && !r.checkedIn) return false;
+    if(!t) return true;
+    return [r.name,r.company,r.phone,r.code,r.email].join(" ").toLowerCase().includes(t);
+  });
+
+  if(!list.length){
+    tableWrap.innerHTML = `<div class="empty">ยังไม่มีข้อมูลที่ตรงกับเงื่อนไข<br>
+      เมื่อแขกกรอกฟอร์มลงทะเบียน รายชื่อจะขึ้นที่นี่อัตโนมัติ</div>`;
+    return;
+  }
+
+  tableWrap.innerHTML = `<table><thead><tr>
+    <th>ชื่อ – บริษัท</th><th class="hidesm">ติดต่อ</th><th>สถานะ</th><th>ท่าน</th>
+    <th class="hidesm">อาหาร</th><th>เช็คอิน</th></tr></thead><tbody>` +
+    list.map(r=>`<tr>
+      <td><b>${esc(r.name||"-")}</b><span class="sub">${esc(r.company||"")} ${r.code?"· "+esc(r.code):""}</span></td>
+      <td class="hidesm">${esc(r.phone||"-")}<span class="sub">${esc(r.email||"")}</span></td>
+      <td><span class="pill ${r.attending==="yes"?"yes":"no"}">${r.attending==="yes"?"เข้าร่วม":"ไม่สะดวก"}</span></td>
+      <td>${r.attending==="yes" ? (r.guests||1) : "–"}${r.companion?`<span class="sub">${esc(r.companion)}</span>`:""}</td>
+      <td class="hidesm">${esc(r.diet||"–")}</td>
+      <td>${r.attending==="yes"
+            ? `<button class="chk ${r.checkedIn?"done":""}" data-k="${r.key}">${r.checkedIn?"เช็คอินแล้ว":"เช็คอิน"}</button>`
+            : "–"}</td>
+    </tr>`).join("") + `</tbody></table>`;
+
+  tableWrap.querySelectorAll(".chk").forEach(b=> b.onclick = ()=> toggleIn(b.dataset.k));
+}
+
+async function toggleIn(key){
+  const r = rows.find(x=>x.key===key); if(!r) return;
+  const now = !r.checkedIn;
+  r.checkedIn = now; r.checkedInAt = now ? new Date().toISOString() : "";
+  draw();
+  const patch = {checkedIn:r.checkedIn, checkedInAt:r.checkedInAt};
+  if(DB.url){
+    try{ await fetch(q(DB.path+"/"+key), {method:"PATCH",headers:{"Content-Type":"application/json"},
+                                          body:JSON.stringify(patch)}); }catch(e){}
+  }else{
+    try{ await window.storage.set(key, JSON.stringify({...r, key:undefined})); }catch(e){}
+  }
+}
+
+const esc = s => String(s??"").replace(/[<>&"]/g, c => ({"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]));
+
+search.oninput = e => { term = e.target.value; draw(); };
+document.querySelectorAll("#filter button").forEach(b=>{
+  b.onclick = ()=>{
+    filter = b.dataset.f;
+    document.querySelectorAll("#filter button").forEach(x=>x.setAttribute("aria-pressed", x===b));
+    draw();
+  };
+});
+refresh.onclick = load;
+
+csv.onclick = ()=>{
+  const head = ["code","name","company","phone","email","attending","guests","companion","diet","checkedIn","checkedInAt","submittedAt"];
+  const body = rows.map(r => head.map(h => `"${String(r[h] ?? "").replace(/"/g,'""')}"`).join(","));
+  const blob = new Blob(["\uFEFF"+head.join(",")+"\n"+body.join("\n")], {type:"text/csv;charset=utf-8"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "exclusive-night-rsvp-" + new Date().toISOString().slice(0,10) + ".csv";
+  a.click();
+};
+
+load();
+setInterval(load, 30000);   /* อัปเดตอัตโนมัติทุก 30 วินาที */
+</script>
+</body>
+</html>

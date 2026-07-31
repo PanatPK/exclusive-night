@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>ตอบรับคำเชิญ — THE EX-CLUSIVE NIGHT</title>
+<style>
+  :root{
+    --se-red:#E2001A; --ink:#111111; --ink-soft:#4A4A4A; --grey:#909195;
+    --line:#D9D9D9; --paper:#FFFFFF;
+    --font-display:"Times New Roman","Georgia",serif;
+    --font-ui:-apple-system,BlinkMacSystemFont,"Helvetica Neue","Segoe UI","Noto Sans Thai","Sarabun",Arial,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:#EDEDED;font-family:var(--font-ui);color:var(--ink);
+       display:flex;justify-content:center;min-height:100dvh}
+  .sheet{width:100%;max-width:460px;background:var(--paper);min-height:100dvh;
+         box-shadow:0 0 60px rgba(0,0,0,.12);display:flex;flex-direction:column}
+  .heatbar{height:4px;flex:none;background:linear-gradient(90deg,#1E5AFF,#00B3D6 30%,#FFB020 55%,#FF5A1F 80%,#E2001A)}
+
+  header{padding:26px 30px 0;text-align:center;flex:none}
+  .logo{display:inline-block;background:#fff;border:1px solid #1a1a1a;padding:5px 11px 4px}
+  .logo b{display:block;font-size:13.5px;font-weight:800;letter-spacing:-.01em;line-height:1.15;white-space:nowrap}
+  .logo i{display:block;height:3.5px;background:var(--se-red);margin-top:3px}
+
+  .title{font-family:var(--font-display);text-align:center;line-height:.95;margin:24px 0 0;
+         font-size:clamp(28px,8vw,36px);letter-spacing:.02em}
+  .title .pre{display:block;font-family:var(--font-ui);font-weight:600;font-size:.32em;
+              letter-spacing:.34em;color:var(--ink-soft);margin-bottom:8px}
+  .title .red{display:block;color:var(--se-red);font-size:.68em;letter-spacing:.2em;margin-top:6px}
+
+  main{padding:0 30px 40px;flex:1}
+  .facts{margin:26px 0 0;border-top:1px solid var(--line)}
+  .facts div{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+  .facts svg{flex:none;width:17px;height:17px;stroke:var(--ink);fill:none;stroke-width:1.5;margin-top:2px}
+  .facts b{font-size:13.5px;font-weight:600;line-height:1.5;display:block}
+  .facts small{display:block;font-size:11.5px;color:var(--ink-soft);margin-top:3px;line-height:1.6}
+  .facts a{color:var(--se-red);font-size:11px;letter-spacing:.08em;font-weight:700;text-decoration:none;
+           display:inline-block;margin-top:7px;border-bottom:1px solid color-mix(in srgb,var(--se-red) 35%,#fff)}
+
+  .codestrip{display:flex;align-items:center;gap:12px;margin:22px 0 4px;
+             border:1.5px solid var(--se-red);border-radius:2px;padding:11px 14px}
+  .codestrip em{font-style:normal;font-size:8.5px;letter-spacing:.22em;color:var(--grey);flex:none}
+  .codestrip b{margin-left:auto;font-size:16px;letter-spacing:.14em;color:var(--se-red)}
+
+  .lead{font-size:10px;letter-spacing:.26em;color:var(--grey);text-align:center;margin:34px 0 22px}
+  .lead::after{content:"";display:block;width:26px;height:2px;background:var(--se-red);margin:12px auto 0}
+
+  .field{margin-bottom:18px}
+  .field label{display:block;font-size:9.5px;letter-spacing:.2em;color:var(--grey);margin-bottom:7px}
+  .field label b{color:var(--se-red)}
+  .field input,.field textarea{width:100%;font-family:inherit;font-size:16px;color:var(--ink);border:0;
+    border-bottom:1.5px solid var(--line);background:transparent;padding:8px 0;border-radius:0;outline:none;
+    transition:border-color .2s}
+  .field textarea{resize:none;min-height:56px}
+  .field input:focus,.field textarea:focus{border-color:var(--se-red)}
+  .field.err input,.field.err textarea{border-color:var(--se-red)}
+  .field .msg{font-size:10.5px;color:var(--se-red);margin-top:6px;display:none}
+  .field.err .msg{display:block}
+
+  .choice{display:flex;gap:9px}
+  .choice button{flex:1;padding:14px 8px;border:1.5px solid var(--line);background:#fff;border-radius:2px;
+    font-family:inherit;font-size:11.5px;letter-spacing:.1em;color:var(--ink-soft);cursor:pointer;transition:all .2s}
+  .choice button[aria-pressed="true"]{border-color:var(--se-red);color:var(--se-red);font-weight:700}
+  .stepper{display:flex;align-items:center;gap:18px}
+  .stepper button{width:40px;height:40px;border:1.5px solid var(--line);background:#fff;border-radius:50%;
+                  font-size:19px;color:var(--ink);cursor:pointer;line-height:1}
+  .stepper output{font-size:22px;font-weight:700;min-width:26px;text-align:center}
+  .stepper span{font-size:11px;color:var(--grey);letter-spacing:.1em}
+
+  .consent{display:flex;gap:11px;align-items:flex-start;margin:6px 0 22px;cursor:pointer}
+  .consent input{width:19px;height:19px;flex:none;margin-top:1px;accent-color:var(--se-red)}
+  .consent p{margin:0;font-size:11.5px;line-height:1.7;color:var(--ink-soft)}
+  .consent.err p{color:var(--se-red)}
+
+  .btn{display:block;width:100%;border:0;border-radius:2px;padding:16px;cursor:pointer;font-family:inherit;
+       font-size:12px;font-weight:700;letter-spacing:.18em;background:var(--se-red);color:#fff;transition:transform .12s}
+  .btn:active{transform:scale(.985)}
+  .btn:disabled{opacity:.55;cursor:default}
+  .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+  .btn.mini{padding:13px;font-size:11px;letter-spacing:.14em}
+  .note{font-size:10.5px;color:var(--grey);text-align:center;margin:16px 0 0;line-height:1.8}
+  .alert{display:none;background:#FFF4F5;border-left:3px solid var(--se-red);padding:11px 13px;
+         font-size:11.5px;line-height:1.65;color:var(--ink-soft);margin-bottom:16px}
+
+  #done{display:none;text-align:center;padding:14px 0 0;animation:rise .5s cubic-bezier(.2,.7,.3,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  .seal{width:78px;height:78px;margin:10px auto 24px;border-radius:50%;border:1.5px solid var(--se-red);
+        display:grid;place-items:center}
+  .seal svg{width:32px;height:32px;stroke:var(--se-red);fill:none;stroke-width:1.8}
+  #done h3{font-family:var(--font-display);font-size:32px;margin:0 0 8px;letter-spacing:.04em}
+  #done .sub{font-size:13px;color:var(--ink-soft);line-height:1.85;margin:0}
+  .summary{border-top:1px solid var(--line);margin-top:26px;text-align:left}
+  .summary div{display:flex;justify-content:space-between;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .summary div span{color:var(--grey);font-size:9.5px;letter-spacing:.16em;padding-top:3px;flex:none}
+  .summary div b{font-weight:600;text-align:right}
+  .stack{display:flex;flex-direction:column;gap:10px;margin-top:26px}
+  .ticket{margin-top:26px;border:1px solid var(--line);padding:18px;text-align:center}
+  .ticket em{font-style:normal;display:block;font-size:8.5px;letter-spacing:.24em;color:var(--grey);margin-bottom:10px}
+  #entryQR{width:130px;height:130px;margin:0 auto;display:grid;place-items:center}
+  #entryQR img,#entryQR canvas{width:130px !important;height:130px !important}
+  .ticket p{margin:10px 0 0;font-size:10.5px;color:var(--grey);line-height:1.7}
+
+  footer{flex:none;border-top:1px solid var(--line);padding:14px 30px calc(20px + env(safe-area-inset-bottom));
+         text-align:center;font-size:8.5px;letter-spacing:.2em;color:var(--grey)}
+  footer u{color:var(--se-red);text-decoration-color:var(--se-red)}
+  :focus-visible{outline:2px solid var(--se-red);outline-offset:3px}
+  @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+</head>
+<body>
+<div class="sheet">
+  <div class="heatbar"></div>
+  <header><div class="logo"><b>STIEBEL ELTRON</b><i></i></div></header>
+
+  <main>
+    <h1 class="title"><span class="pre">THE</span>EX-CLUSIVE<span class="red">NIGHT</span></h1>
+
+    <div class="facts">
+      <div>
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        <div><b>TUESDAY 06 OCTOBER 2026 — 18:00 HRS.</b>
+          <small>วันอังคารที่ 6 ตุลาคม 2569 · ลงทะเบียน 17:30 น.</small></div>
+      </div>
+      <div>
+        <svg viewBox="0 0 24 24"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <div><b>RENAISSANCE BANGKOK RATCHAPRASONG HOTEL</b>
+          <small>518/8 ถนนเพลินจิต แขวงลุมพินี เขตปทุมวัน กรุงเทพฯ 10330<br>BTS ชิดลม ทางออก 4 เดินเชื่อมสกายวอล์ก 3 นาที</small>
+          <a href="https://www.google.com/maps/search/?api=1&query=13.7425121%2C100.5419701&query_place_id=ChIJAQAAANee4jARzKO247hxrLU"
+             target="_blank" rel="noopener">เปิดแผนที่นำทาง →</a></div>
+      </div>
+      <div>
+        <svg viewBox="0 0 24 24"><path d="M9 3h6l-1.5 3.5L18 21H6l4.5-14.5z"/></svg>
+        <div><b>DRESS CODE — ELEGANT WHITE</b><small>ชุดสุภาพโทนขาว ครีม หรือไอวอรี</small></div>
+      </div>
+    </div>
+
+    <div class="codestrip"><em>INVITATION CODE</em><b id="codeOut">EX-2026-911</b></div>
+
+    <div id="form">
+      <p class="lead">กรอกข้อมูลเพื่อยืนยันสิทธิ์</p>
+      <div class="alert" id="alert"></div>
+
+      <div class="field"><label for="fName">ชื่อ – นามสกุล <b>*</b></label>
+        <input id="fName" type="text" autocomplete="name" placeholder="เช่น สมชาย ใจดี">
+        <p class="msg">กรุณากรอกชื่อ – นามสกุล</p></div>
+
+      <div class="field"><label for="fCompany">บริษัท / ตำแหน่ง</label>
+        <input id="fCompany" type="text" autocomplete="organization" placeholder="เช่น บจก. ตัวอย่าง / ผู้จัดการฝ่ายขาย"></div>
+
+      <div class="field"><label for="fPhone">เบอร์โทรศัพท์ <b>*</b></label>
+        <input id="fPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="08X-XXX-XXXX">
+        <p class="msg">กรุณากรอกเบอร์โทรศัพท์ให้ครบ 9–10 หลัก</p></div>
+
+      <div class="field"><label for="fEmail">อีเมล</label>
+        <input id="fEmail" type="email" autocomplete="email" placeholder="name@company.com">
+        <p class="msg">รูปแบบอีเมลไม่ถูกต้อง</p></div>
+
+      <div class="field"><label>การเข้าร่วมงาน <b>*</b></label>
+        <div class="choice" id="attendChoice">
+          <button type="button" data-val="yes" aria-pressed="true">เข้าร่วม</button>
+          <button type="button" data-val="no" aria-pressed="false">ไม่สะดวกเข้าร่วม</button>
+        </div></div>
+
+      <div class="field" id="guestField"><label>จำนวนผู้เข้าร่วม (รวมท่าน)</label>
+        <div class="stepper">
+          <button type="button" id="minus" aria-label="ลดจำนวน">−</button>
+          <output id="guestOut">1</output>
+          <button type="button" id="plus" aria-label="เพิ่มจำนวน">+</button>
+          <span>สูงสุด 2 ท่าน</span>
+        </div></div>
+
+      <div class="field" id="companionField"><label for="fCompanion">ชื่อผู้ติดตาม</label>
+        <input id="fCompanion" type="text" placeholder="ชื่อ – นามสกุล ผู้ร่วมเดินทาง"></div>
+
+      <div class="field" id="dietField"><label for="fDiet">อาหารที่แพ้ / ข้อจำกัดด้านอาหาร</label>
+        <textarea id="fDiet" placeholder="เช่น แพ้อาหารทะเล, มังสวิรัติ, ฮาลาล"></textarea></div>
+
+      <label class="consent" id="consentWrap">
+        <input type="checkbox" id="fConsent">
+        <p>ยินยอมให้เก็บและใช้ข้อมูลเพื่อการจัดงานนี้เท่านั้น ตาม พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล <b>*</b></p>
+      </label>
+
+      <button class="btn" id="submitBtn">ยืนยันการตอบรับ</button>
+      <p class="note">กรุณาตอบรับภายในวันที่ 25 กันยายน 2026<br>สอบถามเพิ่มเติม 09-8794-9262</p>
+    </div>
+
+    <div id="done">
+      <div class="seal"><svg viewBox="0 0 24 24" id="sealIcon"><path d="M4 12.5 9.5 18 20 6.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h3 id="doneTitle">See you there</h3>
+      <p class="sub" id="doneSub"></p>
+      <div class="summary" id="summary"></div>
+
+      <div class="ticket" id="ticket">
+        <em>ENTRY PASS — แสดงที่จุดลงทะเบียนหน้างาน</em>
+        <div id="entryQR"></div>
+        <p>บันทึกภาพหน้าจอนี้ไว้ หรือเปิดลิงก์เดิมอีกครั้งในวันงาน</p>
+      </div>
+
+      <div class="stack">
+        <button class="btn mini" id="icsBtn">บันทึกลงปฏิทิน</button>
+        <button class="btn ghost mini" id="editBtn">แก้ไขข้อมูล</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>YOUR PRESENCE IS PART OF OUR <u>LEGACY</u>.</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="config.js"></script>
+<script>
+/* ============================================================
+   ตั้งค่าฐานข้อมูล — ใส่ URL ของ Firebase Realtime Database
+   ตัวอย่าง: https://exclusive-night-default-rtdb.asia-southeast1.firebasedatabase.app
+   ถ้าเว้นว่าง = โหมดเดโม (เก็บในเครื่องผู้กรอกเท่านั้น)
+   ============================================================ */
+const DB = (window.EXN && window.EXN.db) || { url:"", path:"rsvps", auth:"" };
+const q = p => DB.url.replace(/\/$/,"") + "/" + p + ".json" + (DB.auth ? "?auth="+DB.auth : "");
+
+const qp   = new URLSearchParams(location.search);
+const CODE = qp.get("code") || "EX-2026-911";
+const NAME = qp.get("name") || "";
+codeOut.textContent = CODE;
+if(NAME) fName.value = NAME;
+
+let attending = "yes", guests = 1;
+
+document.querySelectorAll("#attendChoice button").forEach(b=>{
+  b.onclick = ()=>{
+    attending = b.dataset.val;
+    document.querySelectorAll("#attendChoice button").forEach(x=>x.setAttribute("aria-pressed", x===b));
+    const show = attending==="yes" ? "block" : "none";
+    guestField.style.display = show;
+    dietField.style.display  = show;
+    syncCompanion();
+  };
+});
+const syncCompanion = ()=>{ companionField.style.display = (attending==="yes" && guests>1) ? "block" : "none"; };
+plus.onclick  = ()=>{ if(guests<2){ guests++; guestOut.textContent=guests; syncCompanion(); } };
+minus.onclick = ()=>{ if(guests>1){ guests--; guestOut.textContent=guests; syncCompanion(); } };
+syncCompanion();
+
+const bad = (el,on)=>{ el.closest(".field").classList.toggle("err",on); return !on; };
+const alertBox = document.getElementById("alert");
+const showAlert = msg =>{ alertBox.textContent = msg; alertBox.style.display = msg ? "block" : "none"; };
+
+submitBtn.onclick = async ()=>{
+  showAlert("");
+  const name=fName.value.trim(), phone=fPhone.value.trim(), email=fEmail.value.trim();
+  let ok = true;
+  ok = bad(fName,  name.length<2) && ok;
+  ok = bad(fPhone, phone.replace(/\D/g,"").length<9) && ok;
+  ok = bad(fEmail, email!=="" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) && ok;
+  const consentOK = fConsent.checked;
+  consentWrap.classList.toggle("err", !consentOK);
+  ok = consentOK && ok;
+  if(!ok){
+    (document.querySelector(".field.err input") || (!consentOK ? fConsent : null))?.focus();
+    return;
+  }
+
+  const record = {
+    code:CODE, name, company:fCompany.value.trim(), phone, email, attending,
+    guests: attending==="yes" ? guests : 0,
+    companion: (attending==="yes" && guests>1) ? fCompanion.value.trim() : "",
+    diet: attending==="yes" ? fDiet.value.trim() : "",
+    checkedIn:false, checkedInAt:"",
+    submittedAt:new Date().toISOString()
+  };
+
+  submitBtn.disabled = true; submitBtn.textContent = "กำลังบันทึก…";
+  let saved = false;
+  if(DB.url){
+    try{
+      const r = await fetch(q(DB.path), {method:"POST", headers:{"Content-Type":"application/json"},
+                                         body:JSON.stringify(record)});
+      saved = r.ok;
+      if(!r.ok) showAlert("บันทึกไม่สำเร็จ (รหัส "+r.status+") กรุณาลองใหม่อีกครั้ง หรือโทร 09-8794-9262");
+    }catch(e){
+      showAlert("เชื่อมต่อฐานข้อมูลไม่ได้ กรุณาตรวจสอบสัญญาณอินเทอร์เน็ตแล้วลองใหม่");
+    }
+  }else{
+    try{ await window.storage.set("rsvp:"+CODE+":"+Date.now(), JSON.stringify(record)); }catch(e){}
+    saved = true;
+  }
+  if(!saved){ submitBtn.disabled=false; submitBtn.textContent="ยืนยันการตอบรับ"; return; }
+
+  const yes = attending==="yes";
+  doneTitle.textContent = yes ? "See you there" : "Until next time";
+  doneSub.innerHTML = yes
+    ? `ขอบคุณ ${record.name}<br>เราได้บันทึกการตอบรับของท่านเรียบร้อยแล้ว<br>ทีมงานจะติดต่อยืนยันรายละเอียดอีกครั้งก่อนวันงาน`
+    : `ขอบคุณ ${record.name}<br>ที่แจ้งให้เราทราบ แล้วพบกันในโอกาสต่อไป`;
+  sealIcon.innerHTML = yes
+    ? '<path d="M4 12.5 9.5 18 20 6.5" stroke-linecap="round" stroke-linejoin="round"/>'
+    : '<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 17h.01" stroke-linecap="round"/>';
+  summary.innerHTML =
+    `<div><span>NAME</span><b>${record.name}</b></div>`+
+    (record.company ? `<div><span>COMPANY</span><b>${record.company}</b></div>` : "")+
+    `<div><span>PHONE</span><b>${record.phone}</b></div>`+
+    (yes ? `<div><span>GUESTS</span><b>${guests} ท่าน</b></div>` : "")+
+    (record.companion ? `<div><span>COMPANION</span><b>${record.companion}</b></div>` : "")+
+    (record.diet ? `<div><span>DIET</span><b>${record.diet}</b></div>` : "")+
+    `<div><span>CODE</span><b>${CODE}</b></div>`;
+
+  ticket.style.display = yes ? "block" : "none";
+  icsBtn.style.display = yes ? "block" : "none";
+  if(yes){
+    entryQR.innerHTML = "";
+    if(window.QRCode){
+      new QRCode(entryQR,{text:"EXN|"+CODE+"|"+record.name+"|"+record.guests,
+                          width:130,height:130,colorDark:"#111111",colorLight:"#ffffff",
+                          correctLevel:QRCode.CorrectLevel.M});
+    }else{
+      entryQR.innerHTML = `<div style="width:130px;height:130px;border:1px dashed var(--line);display:grid;
+        place-items:center;font-size:11px;letter-spacing:.14em;color:var(--grey)">${CODE}</div>`;
+    }
+  }
+
+  form.style.display = "none";
+  done.style.display = "block";
+  window.scrollTo({top:0,behavior:"smooth"});
+};
+
+editBtn.onclick = ()=>{
+  done.style.display="none"; form.style.display="block";
+  submitBtn.disabled=false; submitBtn.textContent="ยืนยันการตอบรับ";
+  window.scrollTo({top:0,behavior:"smooth"});
+};
+
+icsBtn.onclick = ()=>{
+  const ics = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//QOOKID//EX-CLUSIVE NIGHT//TH","BEGIN:VEVENT",
+    "UID:exclusive-night-"+CODE+"@qookid.co.th",
+    "DTSTAMP:"+new Date().toISOString().replace(/[-:.]/g,"").slice(0,15)+"Z",
+    "DTSTART:20261006T110000Z","DTEND:20261006T153000Z",
+    "SUMMARY:STIEBEL ELTRON — THE EX-CLUSIVE NIGHT",
+    "LOCATION:Renaissance Bangkok Ratchaprasong Hotel",
+    "DESCRIPTION:Dress code ELEGANT WHITE / Invitation code "+CODE,
+    "END:VEVENT","END:VCALENDAR"].join("\r\n");
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([ics],{type:"text/calendar"}));
+  a.download="ex-clusive-night-2026.ics"; a.click();
+};
+</script>
+</body>
+</html>

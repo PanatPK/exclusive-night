@@ -152,48 +152,6 @@
   .sound{border:0;background:none;padding:6px;cursor:pointer;color:var(--grey);line-height:0}
   .sound svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.6}
 
-  .sheet{position:absolute;inset:0;background:var(--paper);z-index:20;display:flex;flex-direction:column;
-         transform:translateY(100%);transition:transform .42s cubic-bezier(.2,.75,.25,1)}
-  .sheet.open{transform:none}
-  .sheethead{flex:none;padding:24px 26px 14px;border-bottom:1px solid var(--line);
-             display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .sheethead h2{margin:0;font-size:12px;letter-spacing:.24em;font-weight:800}
-  .sheethead h2 span{display:block;font-size:9px;letter-spacing:.16em;color:var(--grey);font-weight:400;margin-top:5px}
-  .x{border:0;background:none;font-size:22px;line-height:1;color:var(--grey);cursor:pointer;padding:0 2px}
-  .sheetbody{flex:1;min-height:0;overflow-y:auto;padding:20px 26px 26px}
-
-  .field{margin-bottom:16px}
-  .field label{display:block;font-size:9.5px;letter-spacing:.2em;color:var(--grey);margin-bottom:7px}
-  .field label b{color:var(--se-red)}
-  .field input,.field textarea{width:100%;font-family:inherit;font-size:15px;color:var(--ink);border:0;
-    border-bottom:1.5px solid var(--line);background:transparent;padding:7px 0;border-radius:0;outline:none;
-    transition:border-color .2s}
-  .field textarea{resize:none;min-height:52px}
-  .field input:focus,.field textarea:focus{border-color:var(--se-red)}
-  .field.err input,.field.err textarea{border-color:var(--se-red)}
-  .field .msg{font-size:10.5px;color:var(--se-red);margin-top:6px;display:none}
-  .field.err .msg{display:block}
-  .choice{display:flex;gap:9px}
-  .choice button{flex:1;padding:13px 8px;border:1.5px solid var(--line);background:#fff;border-radius:2px;
-    font-family:inherit;font-size:11px;letter-spacing:.1em;color:var(--ink-soft);cursor:pointer;transition:all .2s}
-  .choice button[aria-pressed="true"]{border-color:var(--se-red);color:var(--se-red);font-weight:700}
-  .stepper{display:flex;align-items:center;gap:18px}
-  .stepper button{width:38px;height:38px;border:1.5px solid var(--line);background:#fff;border-radius:50%;
-                  font-size:18px;color:var(--ink);cursor:pointer;line-height:1}
-  .stepper output{font-size:22px;font-weight:700;min-width:26px;text-align:center}
-
-  .done{text-align:center;padding:20px 4px}
-  .seal{width:74px;height:74px;margin:6px auto 22px;border-radius:50%;border:1.5px solid var(--se-red);
-        display:grid;place-items:center;animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
-  .seal svg{width:30px;height:30px;stroke:var(--se-red);fill:none;stroke-width:1.8}
-  @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
-  .done h3{font-family:var(--font-display);font-size:30px;margin:0 0 6px;letter-spacing:.04em}
-  .done .sub{font-size:12.5px;color:var(--ink-soft);line-height:1.8}
-  .summary{border-top:1px solid var(--line);margin-top:22px;padding-top:6px;text-align:left}
-  .summary div{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);font-size:12.5px}
-  .summary div b{font-weight:600;text-align:right}
-  .summary div span{color:var(--grey);font-size:9.5px;letter-spacing:.16em;padding-top:3px}
-
   @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
   :focus-visible{outline:2px solid var(--se-red);outline-offset:3px}
 </style>
@@ -239,59 +197,7 @@
     <span style="width:28px"></span>
   </div>
 
-  <section class="sheet" id="formSheet" aria-hidden="true">
-    <div class="sheethead">
-      <h2>ตอบรับคำเชิญ<span>RSVP — THE EX-CLUSIVE NIGHT</span></h2>
-      <button class="x" id="closeForm" aria-label="ปิด">&times;</button>
-    </div>
-    <div class="sheetbody">
-      <div class="field"><label for="fName">ชื่อ – นามสกุล <b>*</b></label>
-        <input id="fName" type="text" autocomplete="name" placeholder="เช่น สมชาย ใจดี">
-        <p class="msg">กรุณากรอกชื่อ – นามสกุล</p></div>
-      <div class="field"><label for="fCompany">บริษัท / ตำแหน่ง</label>
-        <input id="fCompany" type="text" autocomplete="organization" placeholder="เช่น บจก. ตัวอย่าง / ผู้จัดการฝ่ายขาย"></div>
-      <div class="field"><label for="fPhone">เบอร์โทรศัพท์ <b>*</b></label>
-        <input id="fPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="08X-XXX-XXXX">
-        <p class="msg">กรุณากรอกเบอร์โทรศัพท์ให้ครบ 9–10 หลัก</p></div>
-      <div class="field"><label for="fEmail">อีเมล</label>
-        <input id="fEmail" type="email" autocomplete="email" placeholder="name@company.com">
-        <p class="msg">รูปแบบอีเมลไม่ถูกต้อง</p></div>
-      <div class="field"><label>การเข้าร่วมงาน <b>*</b></label>
-        <div class="choice" id="attendChoice">
-          <button type="button" data-val="yes" aria-pressed="true">เข้าร่วม</button>
-          <button type="button" data-val="no" aria-pressed="false">ไม่สะดวกเข้าร่วม</button>
-        </div></div>
-      <div class="field" id="guestField"><label>จำนวนผู้เข้าร่วม (รวมท่าน)</label>
-        <div class="stepper">
-          <button type="button" id="minus" aria-label="ลดจำนวน">−</button>
-          <output id="guestOut">1</output>
-          <button type="button" id="plus" aria-label="เพิ่มจำนวน">+</button>
-          <span style="font-size:11px;color:var(--grey);letter-spacing:.1em">สูงสุด 2 ท่าน</span>
-        </div></div>
-      <div class="field" id="dietField"><label for="fDiet">อาหารที่แพ้ / ข้อจำกัดด้านอาหาร</label>
-        <textarea id="fDiet" placeholder="เช่น แพ้อาหารทะเล, มังสวิรัติ, ฮาลาล"></textarea></div>
-      <button class="btn" id="submitBtn">ยืนยันการตอบรับ</button>
-      <p style="font-size:10px;color:var(--grey);text-align:center;margin:14px 0 0;line-height:1.7">
-        กรุณาตอบรับภายในวันที่ 25 กันยายน 2026<br>สอบถามเพิ่มเติม 09-8794-9262</p>
-    </div>
-  </section>
-
-  <section class="sheet" id="doneSheet" aria-hidden="true">
-    <div class="sheethead">
-      <h2 id="doneHead">ตอบรับเรียบร้อย<span>CONFIRMED</span></h2>
-      <button class="x" id="closeDone" aria-label="ปิด">&times;</button>
-    </div>
-    <div class="sheetbody"><div class="done">
-      <div class="seal"><svg viewBox="0 0 24 24" id="sealIcon"><path d="M4 12.5 9.5 18 20 6.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <h3 id="doneTitle">See you there</h3>
-      <p class="sub" id="doneSub"></p>
-      <div class="summary" id="summary"></div>
-      <div class="btnstack">
-        <button class="btn mini" id="icsBtn">บันทึกลงปฏิทิน</button>
-        <button class="btn ghost mini" id="backBtn">กลับไปหน้าคำเชิญ</button>
-      </div>
-    </div></div>
-  </section>
+  <!-- ฟอร์มตอบรับย้ายไปที่ rsvp.html แล้ว เพื่อให้มีทางเดียวและกันรหัสซ้ำได้ -->
 
 </div></div></div>
 
@@ -315,7 +221,8 @@ const CONFIG = {
   cal:{start:"20261006T110000Z", end:"20261006T153000Z"}
 };
 const qp = new URLSearchParams(location.search);
-if(qp.get("code")) CONFIG.code = qp.get("code");
+const HAS_CODE = !!qp.get("code");
+if(HAS_CODE) CONFIG.code = qp.get("code");
 const GUEST_NAME = qp.get("name") || "";
 
 /* ===== 2. หมุด: OFF + 5 หมวด ===== */
@@ -391,7 +298,7 @@ function render(i){
     /* 5 */
     `<div class="card">
       <p class="codelabel">INVITATION CODE</p>
-      <div class="codebox">${CONFIG.code}</div>
+      <div class="codebox">${HAS_CODE ? CONFIG.code : "ตัวอย่าง — PREVIEW"}</div>
       <div class="qrwrap"><div id="qr"></div><p class="qrcap">SCAN TO RSVP</p></div>
       <div class="btnstack"><button class="btn" id="rsvpBtn">ตอบรับคำเชิญ</button></div>
       <p style="font-size:10.5px;color:var(--grey);text-align:center;margin:14px 0 0;letter-spacing:.04em">
@@ -399,7 +306,10 @@ function render(i){
     </div>`
   ];
   panel.innerHTML = views[i];
-  if(i===5){ makeQR(); document.getElementById("rsvpBtn").onclick = openForm; }
+  if(i===5){
+    makeQR();
+    document.getElementById("rsvpBtn").onclick = ()=>{ location.href = rsvpLink(); };
+  }
 }
 
 /* ===== 3. เสียงลูกบิด ===== */
@@ -516,10 +426,16 @@ panel.addEventListener("touchend",e=>{
 },{passive:true});
 
 /* ===== 5. QR → หน้าแบบฟอร์ม ===== */
+function rsvpLink(){
+  return HAS_CODE
+    ? CONFIG.rsvpURL+"?code="+encodeURIComponent(CONFIG.code)+(GUEST_NAME?"&name="+encodeURIComponent(GUEST_NAME):"")
+    : CONFIG.rsvpURL;
+}
+
 function makeQR(){
   const box=document.getElementById("qr"); if(!box) return;
   box.innerHTML="";
-  const url=CONFIG.rsvpURL+"?code="+encodeURIComponent(CONFIG.code)+(GUEST_NAME?"&name="+encodeURIComponent(GUEST_NAME):"");
+  const url = rsvpLink();
   if(window.QRCode){
     new QRCode(box,{text:url,width:116,height:116,colorDark:"#111111",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});
   }else{
@@ -527,74 +443,6 @@ function makeQR(){
       font-size:9px;letter-spacing:.14em;color:var(--grey);text-align:center;padding:10px">QR CODE<br>${CONFIG.code}</div>`;
   }
 }
-
-/* ===== 6. ฟอร์มตอบรับ (ในบัตร) ===== */
-const formSheet=document.getElementById("formSheet"), doneSheet=document.getElementById("doneSheet");
-let attending="yes", guests=1;
-const openForm=()=>{ formSheet.classList.add("open"); formSheet.setAttribute("aria-hidden","false");
-                     if(GUEST_NAME && !fName.value) fName.value=GUEST_NAME; };
-const closeSheet=s=>{ s.classList.remove("open"); s.setAttribute("aria-hidden","true"); };
-document.getElementById("closeForm").onclick=()=>closeSheet(formSheet);
-document.getElementById("closeDone").onclick=()=>{ closeSheet(doneSheet); closeSheet(formSheet); };
-document.getElementById("backBtn").onclick =()=>{ closeSheet(doneSheet); closeSheet(formSheet); };
-
-document.querySelectorAll("#attendChoice button").forEach(b=>{
-  b.onclick=()=>{
-    attending=b.dataset.val;
-    document.querySelectorAll("#attendChoice button").forEach(x=>x.setAttribute("aria-pressed",x===b));
-    const show=attending==="yes"?"block":"none";
-    guestField.style.display=show; dietField.style.display=show;
-    clickSound(true);
-  };
-});
-document.getElementById("plus").onclick =()=>{ if(guests<2){ guests++; guestOut.textContent=guests; clickSound(true);} };
-document.getElementById("minus").onclick=()=>{ if(guests>1){ guests--; guestOut.textContent=guests; clickSound(true);} };
-function bad(el,on){ el.closest(".field").classList.toggle("err",on); return !on; }
-
-document.getElementById("submitBtn").onclick=async()=>{
-  const name=fName.value.trim(), phone=fPhone.value.trim(), email=fEmail.value.trim();
-  let ok=true;
-  ok = bad(fName, name.length<2) && ok;
-  ok = bad(fPhone, phone.replace(/\D/g,"").length<9) && ok;
-  ok = bad(fEmail, email!=="" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) && ok;
-  if(!ok){ document.querySelector(".field.err input").focus(); return; }
-  const record={code:CONFIG.code,name,company:fCompany.value.trim(),phone,email,attending,
-                guests:attending==="yes"?guests:0,diet:fDiet.value.trim(),submittedAt:new Date().toISOString()};
-  try{ await window.storage.set("rsvp:"+CONFIG.code+":"+Date.now(), JSON.stringify(record)); }catch(e){}
-
-  const yes = attending==="yes";
-  doneHead.innerHTML = yes?"ตอบรับเรียบร้อย<span>CONFIRMED</span>":"รับทราบแล้ว<span>NOTED</span>";
-  doneTitle.textContent = yes?"See you there":"Until next time";
-  doneSub.innerHTML = yes
-    ? `ขอบคุณ ${name}<br>เราได้บันทึกการตอบรับของท่านเรียบร้อยแล้ว<br>ทีมงานจะติดต่อยืนยันรายละเอียดอีกครั้ง`
-    : `ขอบคุณ ${name}<br>ที่แจ้งให้เราทราบ แล้วพบกันในโอกาสต่อไป`;
-  document.getElementById("sealIcon").innerHTML = yes
-    ? '<path d="M4 12.5 9.5 18 20 6.5" stroke-linecap="round" stroke-linejoin="round"/>'
-    : '<circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 17h.01" stroke-linecap="round"/>';
-  summary.innerHTML =
-    `<div><span>NAME</span><b>${name}</b></div>`+
-    (record.company?`<div><span>COMPANY</span><b>${record.company}</b></div>`:"")+
-    (yes?`<div><span>GUESTS</span><b>${guests} ท่าน</b></div>`:"")+
-    (yes&&record.diet?`<div><span>DIET</span><b>${record.diet}</b></div>`:"")+
-    `<div><span>CODE</span><b>${CONFIG.code}</b></div>`;
-  icsBtn.style.display = yes?"block":"none";
-  doneSheet.classList.add("open"); doneSheet.setAttribute("aria-hidden","false");
-  clickSound(false);
-};
-
-document.getElementById("icsBtn").onclick=()=>{
-  const ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//QOOKID//EX-CLUSIVE NIGHT//TH","BEGIN:VEVENT",
-    "UID:exclusive-night-"+CONFIG.code+"@qookid.co.th",
-    "DTSTAMP:"+new Date().toISOString().replace(/[-:.]/g,"").slice(0,15)+"Z",
-    "DTSTART:"+CONFIG.cal.start,"DTEND:"+CONFIG.cal.end,
-    "SUMMARY:STIEBEL ELTRON — THE EX-CLUSIVE NIGHT",
-    "LOCATION:Renaissance Bangkok Ratchaprasong Hotel",
-    "DESCRIPTION:Dress code ELEGANT WHITE / Invitation code "+CONFIG.code,
-    "END:VEVENT","END:VCALENDAR"].join("\r\n");
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(new Blob([ics],{type:"text/calendar"}));
-  a.download="ex-clusive-night-2026.ics"; a.click();
-};
 
 document.getElementById("soundBtn").onclick=function(){
   muted=!muted;

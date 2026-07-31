@@ -139,8 +139,22 @@
 
     <div class="codestrip"><em>INVITATION CODE</em><b id="codeOut">EX-2026-911</b></div>
 
+    <div id="blocked" style="display:none">
+      <div class="seal" style="border-color:var(--grey)">
+        <svg viewBox="0 0 24 24" style="stroke:var(--grey)">
+          <circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5h.01" stroke-linecap="round"/></svg>
+      </div>
+      <p style="text-align:center;font-size:13px;line-height:1.95;color:var(--ink-soft);margin:0">
+        <b style="display:block;font-size:16px;color:var(--ink);margin-bottom:10px">ไม่พบรหัสบัตรเชิญ</b>
+        หน้านี้เปิดได้จากลิงก์ในคำเชิญเฉพาะบุคคลเท่านั้น<br>
+        กรุณาเปิดลิงก์ที่ท่านได้รับ หรือสแกน QR บนบัตรเชิญอีกครั้ง<br><br>
+        <span style="font-size:12px;color:var(--grey)">ต้องการความช่วยเหลือ โทร 09-8794-9262</span>
+      </p>
+    </div>
+
     <div id="form">
       <p class="lead">กรอกข้อมูลเพื่อยืนยันสิทธิ์</p>
+      <div class="alert" id="notice" style="background:#FFF8E5;border-left-color:#D99400"></div>
       <div class="alert" id="alert"></div>
 
       <div class="field"><label for="fName">ชื่อ – นามสกุล <b>*</b></label>
@@ -227,6 +241,53 @@ codeOut.textContent = CODE;
 if(NAME) fName.value = NAME;
 
 let attending = "yes", guests = 1;
+let existingKey = null;
+
+/* ---------- 1) ต้องมารหัสบัตรมาด้วยเท่านั้น ---------- */
+if(!qp.get("code")){
+  document.getElementById("form").style.display = "none";
+  document.querySelector(".codestrip").style.display = "none";
+  document.getElementById("blocked").style.display = "block";
+}else{
+  lookupExisting();
+}
+
+/* ---------- 2) รหัสนี้เคยตอบรับไปแล้วหรือยัง ---------- */
+async function lookupExisting(){
+  if(!DB.url) return;
+  try{
+    const data = await (await fetch(q(DB.path))).json() || {};
+    for(const [k,v] of Object.entries(data)){
+      if((v.code||"").toUpperCase() === CODE.toUpperCase()){ existingKey = k; fillFrom(v); break; }
+    }
+  }catch(e){}
+}
+
+function fillFrom(v){
+  const noticeBox = document.getElementById("notice");
+  const when = v.submittedAt
+    ? new Date(v.submittedAt).toLocaleDateString("th-TH",{day:"numeric",month:"long",year:"numeric"})
+    : "";
+  noticeBox.innerHTML = "รหัสบัตรนี้ตอบรับไว้แล้ว" + (when ? " เมื่อ " + when : "") +
+    "<br>หากต้องการเปลี่ยนคำตอบหรือแก้ไขข้อมูล แก้ในฟอร์มด้านล่างแล้วกดยืนยันได้เลย ระบบจะอัปเดตทับรายการเดิม";
+  noticeBox.style.display = "block";
+
+  fName.value    = v.name || "";
+  fCompany.value = v.company || "";
+  fPhone.value   = v.phone || "";
+  fEmail.value   = v.email || "";
+  fDiet.value    = v.diet || "";
+  fCompanion.value = v.companion || "";
+  fConsent.checked = true;
+  guests = Math.min(2, Math.max(1, Number(v.guests) || 1));
+  guestOut.textContent = guests;
+  const want = (v.attending === "no") ? "no" : "yes";
+  document.querySelectorAll("#attendChoice button").forEach(b=>{
+    if(b.dataset.val === want) b.click();
+  });
+  syncCompanion();
+  submitBtn.textContent = "อัปเดตข้อมูล";
+}
 
 document.querySelectorAll("#attendChoice button").forEach(b=>{
   b.onclick = ()=>{
@@ -275,8 +336,26 @@ submitBtn.onclick = async ()=>{
   let saved = false;
   if(DB.url){
     try{
-      const r = await fetch(q(DB.path), {method:"POST", headers:{"Content-Type":"application/json"},
-                                         body:JSON.stringify(record)});
+      /* กันรหัสซ้ำ: เช็คอีกรอบก่อนบันทึกจริง เผื่อมีคนกรอกพร้อมกัน */
+      if(!existingKey){
+        try{
+          const all = await (await fetch(q(DB.path))).json() || {};
+          for(const [k,v] of Object.entries(all))
+            if((v.code||"").toUpperCase() === CODE.toUpperCase()){ existingKey = k; break; }
+        }catch(e){}
+      }
+      let r;
+      if(existingKey){
+        const patch = {...record};
+        delete patch.checkedIn; delete patch.checkedInAt;   /* ไม่ทับสถานะเช็คอินหน้างาน */
+        patch.updatedAt = new Date().toISOString();
+        r = await fetch(q(DB.path + "/" + existingKey), {method:"PATCH",
+              headers:{"Content-Type":"application/json"}, body:JSON.stringify(patch)});
+      }else{
+        r = await fetch(q(DB.path), {method:"POST", headers:{"Content-Type":"application/json"},
+                                     body:JSON.stringify(record)});
+        try{ const j = await r.clone().json(); if(j && j.name) existingKey = j.name; }catch(e){}
+      }
       saved = r.ok;
       if(!r.ok) showAlert("บันทึกไม่สำเร็จ (รหัส "+r.status+") กรุณาลองใหม่อีกครั้ง หรือโทร 09-8794-9262");
     }catch(e){
@@ -326,7 +405,7 @@ submitBtn.onclick = async ()=>{
 
 editBtn.onclick = ()=>{
   done.style.display="none"; form.style.display="block";
-  submitBtn.disabled=false; submitBtn.textContent="ยืนยันการตอบรับ";
+  submitBtn.disabled=false; submitBtn.textContent = existingKey ? "อัปเดตข้อมูล" : "ยืนยันการตอบรับ";
   window.scrollTo({top:0,behavior:"smooth"});
 };
 

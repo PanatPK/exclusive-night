@@ -13,7 +13,7 @@ window.EXN = {
      ถ้าเว้น url ว่างไว้ = โหมดเดโม เก็บข้อมูลในเครื่องที่กรอกเท่านั้น
   -------------------------------------------------- */
   db: {
-    url : "",          /* เช่น "https://exclusive-night-default-rtdb.asia-southeast1.firebasedatabase.app" */
+    url : url : "https://exclusive-night-default-rtdb.asia-southeast1.firebasedatabase.app",          /* เช่น "https://exclusive-night-default-rtdb.asia-southeast1.firebasedatabase.app" */
     path: "rsvps",
     auth: ""           /* ไม่บังคับ */
   },

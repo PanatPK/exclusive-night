@@ -37,39 +37,48 @@
 
   /* ---------- SOFTCUBE DIAL ---------- */
   .knobzone{flex:none;padding:18px 26px 0;display:flex;flex-direction:column;align-items:center}
-  .cube{position:relative;width:min(230px,58vw);aspect-ratio:1;border-radius:26%;
-        background:linear-gradient(158deg,#3a3a3d 0%,#1a1a1c 30%,#0b0b0c 62%,#151517 100%);
-        box-shadow:0 22px 40px rgba(0,0,0,.34),0 3px 8px rgba(0,0,0,.25),
-                   inset 0 1px 1px rgba(255,255,255,.22),inset 0 -12px 26px rgba(0,0,0,.6);
+  .cube{position:relative;width:min(234px,60vw);aspect-ratio:1;border-radius:27%;
+        background:linear-gradient(165deg,#6d6d70 0%,#58585b 24%,#4c4c4f 58%,#414144 100%);
+        box-shadow:0 24px 44px rgba(0,0,0,.30),0 4px 10px rgba(0,0,0,.18),
+                   inset 0 2px 2px rgba(255,255,255,.18),inset 0 -16px 30px rgba(0,0,0,.26);
         touch-action:none;cursor:grab}
   .cube:active{cursor:grabbing}
-  .cube svg.ring{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-  .track{fill:none;stroke:rgba(255,255,255,.85);stroke-width:2.2;stroke-linecap:round}
+
+  /* ขีดอ้างอิงสีขาวด้านบนตัวเครื่อง */
+  .toptick{position:absolute;top:4.5%;left:50%;width:2.4%;height:7.5%;transform:translateX(-50%);
+           border-radius:99px;background:rgba(255,255,255,.95);z-index:4;
+           box-shadow:0 1px 2px rgba(0,0,0,.35)}
+
+  .cube svg.ring{position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:1}
+  .track{fill:none;stroke:rgba(255,255,255,.9);stroke-width:2.4;stroke-linecap:round}
   .heat{fill:none;stroke:url(#heatgrad);stroke-width:4.6;stroke-linecap:round;
         stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset .05s linear;
-        filter:drop-shadow(0 0 6px rgba(255,255,255,.22))}
-  .tick{fill:rgba(255,255,255,.3);transition:fill .3s ease}
-  .tick.on{fill:var(--accent)}
-  .offlabel{fill:rgba(255,255,255,.55);font-size:9px;letter-spacing:.18em;font-family:var(--font-ui);
-            font-weight:600;transition:fill .3s}
-  .offlabel.live{fill:#fff}
+        filter:drop-shadow(0 0 5px rgba(255,255,255,.2))}
 
-  .knob{position:absolute;inset:23%;border-radius:50%;
-        background:radial-gradient(circle at 50% 30%,#4d4d50 0%,#2b2b2d 40%,#161618 72%,#0a0a0b 100%);
-        box-shadow:0 8px 18px rgba(0,0,0,.5),inset 0 1px 1px rgba(255,255,255,.3),
-                   inset 0 -8px 18px rgba(0,0,0,.6)}
-  .knob::after{content:"";position:absolute;inset:8%;border-radius:50%;
-    background:conic-gradient(from 200deg,#3f3f42,#0f0f10,#3a3a3d,#101011,#3f3f42);opacity:.9}
-  .knob::before{content:"";position:absolute;inset:34%;border-radius:50%;z-index:2;
-    background:radial-gradient(circle at 50% 35%,#2e2e31,#111113);
-    box-shadow:inset 0 1px 2px rgba(255,255,255,.14)}
-  .mark{position:absolute;top:7%;left:50%;width:3px;height:20%;transform:translateX(-50%);
-        border-radius:2px;background:#fff;z-index:3;transition:box-shadow .35s}
-  .mark.live{box-shadow:0 0 9px color-mix(in srgb,var(--accent) 85%,transparent)}
-  .cube .ic{position:absolute;width:19px;height:19px;stroke:#fff;fill:none;stroke-width:1.9;
-            stroke-linecap:round;opacity:.85;z-index:4}
-  .cube .ic.pw{left:13%;bottom:12%}
-  .cube .ic.th{right:13%;bottom:12%}
+  /* ลูกบิดอะลูมิเนียมปัดเสี้ยน */
+  .knob{position:absolute;inset:19%;border-radius:50%;z-index:2;
+    background:
+      radial-gradient(circle at 50% 42%, rgba(255,255,255,.42) 0%, rgba(255,255,255,.06) 32%,
+                                          rgba(0,0,0,.05) 60%, rgba(0,0,0,.30) 100%),
+      conic-gradient(from 90deg,
+        #a9acaf,#7d8083,#cacdd0,#8a8d90,#c0c3c6,#777a7d,#b5b8bb,#828589,#c7cacd,#8d9093,
+        #a2a5a8,#757a7d,#c3c6c9,#878a8d,#bcbfc2,#7b7e81,#afb2b5,#7f8285,#c5c8cb,#898c8f,#a9acaf);
+    box-shadow:0 10px 20px rgba(0,0,0,.42),0 2px 5px rgba(0,0,0,.32),
+               inset 0 0 0 1px rgba(255,255,255,.32),inset 0 -12px 22px rgba(0,0,0,.28)}
+  .mark{position:absolute;top:7.5%;left:50%;width:3.4%;height:13%;transform:translateX(-50%);
+        border-radius:99px;background:#fff;z-index:3;transition:box-shadow .35s;
+        box-shadow:0 1px 3px rgba(0,0,0,.4)}
+  .mark.live{box-shadow:0 1px 3px rgba(0,0,0,.4),0 0 10px color-mix(in srgb,var(--accent) 85%,transparent)}
+
+  .cube .ic{position:absolute;width:8.6%;height:8.6%;stroke:#fff;fill:none;stroke-width:2;
+            stroke-linecap:round;opacity:.92;z-index:4}
+  .cube .ic.pw{left:20%;top:73%}
+  .cube .ic.th{right:20%;top:73%}
+
+  .cubelogo{position:absolute;left:50%;bottom:6.5%;transform:translateX(-50%);z-index:4;text-align:center}
+  .cubelogo b{display:block;font-size:clamp(8px,3.3vw,11px);font-weight:800;color:#fff;
+              letter-spacing:-.01em;line-height:1.1;white-space:nowrap}
+  .cubelogo i{display:block;height:2px;background:#fff;margin-top:2px}
 
   .hint{margin-top:14px;font-size:11px;letter-spacing:.16em;color:var(--grey);text-transform:uppercase;
         text-align:center;height:15px;transition:opacity .4s ease}
@@ -197,22 +206,22 @@
   <div class="knobzone">
     <div class="cube" id="dialbox" role="slider" tabindex="0"
          aria-label="หมุนลูกบิดเพื่อเปิดคำเชิญ" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0">
+      <span class="toptick"></span>
       <svg class="ring" viewBox="0 0 240 240" aria-hidden="true">
         <defs>
-          <linearGradient id="heatgrad" gradientUnits="userSpaceOnUse" x1="55" y1="180" x2="185" y2="180">
+          <linearGradient id="heatgrad" gradientUnits="userSpaceOnUse" x1="51" y1="180" x2="189" y2="180">
             <stop offset="0" stop-color="#1E5AFF"/><stop offset=".3" stop-color="#00B3D6"/>
             <stop offset=".55" stop-color="#FFB020"/><stop offset=".8" stop-color="#FF5A1F"/>
             <stop offset="1" stop-color="#E2001A"/>
           </linearGradient>
         </defs>
-        <path class="track" pathLength="100" d="M 60.25 170.13 A 78 78 0 1 1 179.75 170.13"/>
-        <path class="heat" id="heatPath" pathLength="100" d="M 60.25 170.13 A 78 78 0 1 1 179.75 170.13"/>
-        <g id="ticks"></g>
-        <text class="offlabel" id="offLabel" x="46" y="188" text-anchor="middle">OFF</text>
+        <path class="track" pathLength="100" d="M 51.19 168.18 A 84 84 0 1 1 188.81 168.18"/>
+        <path class="heat" id="heatPath" pathLength="100" d="M 51.19 168.18 A 84 84 0 1 1 188.81 168.18"/>
       </svg>
       <div class="knob" id="knob"><span class="mark" id="mark"></span></div>
       <svg class="ic pw" viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M18.4 6.6a9 9 0 1 1-12.8 0"/></svg>
       <svg class="ic th" viewBox="0 0 24 24"><path d="M14 14.8V4a2 2 0 0 0-4 0v10.8a4 4 0 1 0 4 0z"/></svg>
+      <div class="cubelogo"><b>STIEBEL ELTRON</b><i></i></div>
     </div>
     <p class="hint" id="hint">หมุนลูกบิดเพื่อเปิดคำเชิญ</p>
   </div>
@@ -316,7 +325,7 @@ const STOPS=[
   {label:"DRESS",     color:"#FF5A1F"},
   {label:"RSVP",      color:"#E2001A"}
 ];
-const N=STOPS.length, SWEEP=260, STEP=SWEEP/(N-1), MIN=-130, MAX=130;
+const N=STOPS.length, SWEEP=250, STEP=SWEEP/(N-1), MIN=-125, MAX=125;
 
 const ico={
   cal:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
@@ -424,17 +433,9 @@ function clickSound(soft){
 const dialbox=document.getElementById("dialbox"), knob=document.getElementById("knob"),
       heat=document.getElementById("heatPath"), dotsEl=document.getElementById("dots"),
       panel=document.getElementById("panel"), hint=document.getElementById("hint"),
-      ticksG=document.getElementById("ticks"), mark=document.getElementById("mark"),
-      offLabel=document.getElementById("offLabel");
+      mark=document.getElementById("mark");
 let angle=MIN, index=0, touched=false;
 
-STOPS.forEach((s,i)=>{
-  if(i===0) return;                      /* จุด OFF ใช้ตัวอักษรแทนจุด */
-  const a=(MIN+i*STEP)*Math.PI/180;
-  const c=document.createElementNS("http://www.w3.org/2000/svg","circle");
-  c.setAttribute("cx",120+92*Math.sin(a)); c.setAttribute("cy",120-92*Math.cos(a));
-  c.setAttribute("r",2.6); c.setAttribute("class","tick"); ticksG.appendChild(c);
-});
 STOPS.forEach((s,i)=>{
   const b=document.createElement("button");
   b.className="dot"; b.innerHTML=`<i></i><em>${s.label}</em>`;
@@ -448,8 +449,6 @@ function paint(){
   knob.style.transform = `rotate(${angle}deg)`;
   document.documentElement.style.setProperty("--accent",STOPS[index].color);
   mark.classList.toggle("live",on);
-  offLabel.classList.toggle("live",!on);
-  ticksG.querySelectorAll(".tick").forEach((t,i)=>t.classList.toggle("on",i+1<=index));
   dotsEl.querySelectorAll(".dot").forEach((d,i)=>{
     d.classList.toggle("on",i===index); d.classList.toggle("past",i<index);
   });
@@ -473,20 +472,25 @@ function goTo(i,animate){
 }
 function markTouched(){ if(touched) return; touched=true; hint.classList.add("gone"); }
 
-let dragging=false, grabOffset=0;
+let dragging=false, lastRaw=0;
 const angleOf=e=>{
   const r=dialbox.getBoundingClientRect();
   return Math.atan2(e.clientX-(r.left+r.width/2), -(e.clientY-(r.top+r.height/2)))*180/Math.PI;
 };
 dialbox.addEventListener("pointerdown",e=>{
   dragging=true; dialbox.setPointerCapture(e.pointerId);
-  grabOffset=angleOf(e)-angle; markTouched(); audio();
+  lastRaw=angleOf(e); markTouched(); audio();
 });
 dialbox.addEventListener("pointermove",e=>{
   if(!dragging) return;
-  let a=angleOf(e)-grabOffset;
-  if(a>180) a-=360; if(a<-180) a+=360;
-  angle=Math.max(MIN,Math.min(MAX,a));
+  /* คิดจากระยะที่นิ้วขยับ ไม่ใช่ตำแหน่งสัมบูรณ์
+     ทำให้หมุนเลยปลายทั้งสองข้างแล้วค้างอยู่ที่ปลาย ไม่วนกลับไปอีกฝั่ง */
+  const raw = angleOf(e);
+  let d = raw - lastRaw;
+  if(d > 180) d -= 360;
+  if(d < -180) d += 360;
+  lastRaw = raw;
+  angle = Math.max(MIN, Math.min(MAX, angle + d));
   setIndex(Math.round((angle-MIN)/STEP)); paint();
 });
 const release=()=>{ if(dragging){ dragging=false; goTo(index,true); } };

@@ -95,8 +95,11 @@
   .stack{display:flex;flex-direction:column;gap:10px;margin-top:26px}
   .ticket{margin-top:26px;border:1px solid var(--line);padding:18px;text-align:center}
   .ticket em{font-style:normal;display:block;font-size:8.5px;letter-spacing:.24em;color:var(--grey);margin-bottom:10px}
-  #entryQR{width:130px;height:130px;margin:0 auto;display:grid;place-items:center}
-  #entryQR img,#entryQR canvas{width:130px !important;height:130px !important}
+  #entryQR{width:196px;height:196px;margin:0 auto;display:grid;place-items:center;
+           background:#fff;padding:14px;border:1px solid var(--line)}
+  #entryQR img,#entryQR canvas{width:168px !important;height:168px !important;display:block}
+  .passcode{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:20px;font-weight:700;
+            letter-spacing:.22em;color:var(--se-red);margin:14px 0 0}
   .ticket p{margin:10px 0 0;font-size:10.5px;color:var(--grey);line-height:1.7}
 
   footer{flex:none;border-top:1px solid var(--line);padding:14px 30px calc(20px + env(safe-area-inset-bottom));
@@ -193,7 +196,9 @@
       <div class="ticket" id="ticket">
         <em>ENTRY PASS — แสดงที่จุดลงทะเบียนหน้างาน</em>
         <div id="entryQR"></div>
-        <p>บันทึกภาพหน้าจอนี้ไว้ หรือเปิดลิงก์เดิมอีกครั้งในวันงาน</p>
+        <p class="passcode" id="passCode">—</p>
+        <p>บันทึกภาพหน้าจอนี้ไว้ หรือเปิดลิงก์เดิมอีกครั้งในวันงาน<br>
+           หากสแกนไม่ติด แจ้งรหัสด้านบนกับเจ้าหน้าที่ได้</p>
       </div>
 
       <div class="stack">
@@ -403,13 +408,23 @@ submitBtn.onclick = async ()=>{
   icsBtn.style.display = yes ? "block" : "none";
   if(yes){
     entryQR.innerHTML = "";
+    passCode.textContent = myCode;
+    /* เข้ารหัสเฉพาะรหัสบัตร ตัวอักษรอังกฤษล้วนและสั้น
+       ทำให้ QR ลายหยาบ กล้องจับติดง่ายกว่าการยัดชื่อภาษาไทยลงไป */
+    let made = false;
     if(window.QRCode){
-      new QRCode(entryQR,{text:"EXN|"+myCode+"|"+record.name+"|"+record.guests,
-                          width:130,height:130,colorDark:"#111111",colorLight:"#ffffff",
-                          correctLevel:QRCode.CorrectLevel.M});
-    }else{
-      entryQR.innerHTML = `<div style="width:130px;height:130px;border:1px dashed var(--line);display:grid;
-        place-items:center;font-size:11px;letter-spacing:.14em;color:var(--grey)">${myCode}</div>`;
+      try{
+        new QRCode(entryQR,{text:myCode, width:168, height:168,
+                            colorDark:"#000000", colorLight:"#ffffff",
+                            correctLevel:QRCode.CorrectLevel.H});
+        made = !!entryQR.querySelector("canvas,img");
+      }catch(e){ made = false; }
+    }
+    if(!made){
+      entryQR.innerHTML = `<div style="width:168px;height:168px;display:grid;place-items:center;
+        font-family:ui-monospace,monospace;font-size:17px;letter-spacing:.16em;color:#111;
+        text-align:center;line-height:1.6">${myCode}<br>
+        <span style="font-size:10px;letter-spacing:.1em;color:#888">แจ้งรหัสนี้กับเจ้าหน้าที่</span></div>`;
     }
   }
 

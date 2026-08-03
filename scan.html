@@ -356,12 +356,13 @@ function handle(text){
   if(text === lastText && now - lastAt < 3000) return;
   lastText = text; lastAt = now;
 
-  /* รองรับทั้ง "EXN|CODE|ชื่อ|จำนวน", URL ที่มี ?code= และรหัสเปล่า */
+  /* รองรับ: รหัสเปล่า / "EXN|CODE|..." แบบเก่า / URL ที่มี ?code= */
   let code = text.trim();
-  if(code.startsWith("EXN|")) code = code.split("|")[1];
+  if(code.includes("|")) code = code.split("|").find(x=>/^[A-Z]{2,4}-/i.test(x)) || code.split("|")[1] || code;
   else if(/^https?:/i.test(code)){
     try{ code = new URL(code).searchParams.get("code") || code; }catch(e){}
   }
+  code = code.trim();
   const rec = rows.find(r => (r.code||"").toUpperCase() === code.toUpperCase());
   if(!rec) return show("bad","✕","ไม่พบข้อมูล","รหัส "+esc(code)+"<br>ยังไม่ได้ลงทะเบียนหรือรหัสไม่ถูกต้อง");
   checkIn(rec);

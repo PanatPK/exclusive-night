@@ -255,7 +255,7 @@ function render(i){
     /* 0 — OFF: ไม่แสดงข้อมูลใด ๆ */
     `<div class="card off">
        <p>STANDBY</p><span class="stand"></span>
-       <p class="th">หมุน Stiebel Cube ตามเข็มนาฬิกา<br>เพื่อดูรายละเอียดทีละหมวด</p>
+       <p class="th">หมุนลูกบิดไปทางขวา<br>เพื่อเปิดรายละเอียดทีละหมวด</p>
      </div>`,
 
     /* 1 */
@@ -304,8 +304,7 @@ function render(i){
 
     /* 5 */
     `<div class="card">
-      <p class="codelabel">INVITATION CODE</p>
-      <div class="codebox">${HAS_CODE ? CONFIG.code : "ตัวอย่าง — PREVIEW"}</div>
+      ${HAS_CODE ? `<p class="codelabel">INVITATION CODE</p><div class="codebox">${CONFIG.code}</div>` : ""}
       <div class="qrwrap"><div id="qr"></div><p class="qrcap">SCAN TO RSVP</p></div>
       <div class="btnstack"><button class="btn" id="rsvpBtn">ตอบรับคำเชิญ</button></div>
       <p style="font-size:10.5px;color:var(--grey);text-align:center;margin:14px 0 0;letter-spacing:.04em">

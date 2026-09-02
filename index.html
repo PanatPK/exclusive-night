@@ -126,10 +126,11 @@
   .xlogo{height:.86em;width:auto;display:block}
   .xline{display:flex;align-items:center;justify-content:center;gap:.06em;line-height:1}
   .xmark{height:.92em;width:auto;display:block;transform:translateY(.02em)}
-  .display{font-family:var(--font-display);text-align:center;line-height:.95;margin:0;letter-spacing:.02em}
+  .display{font-family:var(--font-ui);font-weight:800;text-align:center;line-height:1.02;
+           margin:0;letter-spacing:.04em}
   .display .pre{display:block;font-size:.34em;letter-spacing:.34em;color:var(--ink-soft);margin-bottom:8px;
                 font-family:var(--font-ui);font-weight:600}
-  .display .red{color:var(--se-red);display:block;font-size:.68em;letter-spacing:.2em;margin-top:6px}
+  .display .red{color:var(--se-red);display:block;font-size:.72em;letter-spacing:.14em;margin-top:8px}
   .quote{text-align:center;font-size:10px;line-height:1.75;letter-spacing:.06em;color:var(--ink-soft);
          margin:16px auto 0;max-width:280px}
   .quote u{color:var(--se-red);text-decoration-color:var(--se-red);text-underline-offset:3px}
@@ -251,13 +252,13 @@ const CONFIG = {
   timeEN:"18:00 HRS.",
   timeTH:"ลงทะเบียนและค็อกเทล 17:30 น.",
   venue:"RENAISSANCE BANGKOK<br>RATCHAPRASONG HOTEL",
-  venueSub:"518/8 ถนนเพลินจิต แขวงลุมพินี<br>เขตปทุมวัน กรุงเทพฯ 10330",
+  venueSub:"Royal Maneeya Ballroom<br>518/8 ถนนเพลินจิต แขวงลุมพินี<br>เขตปทุมวัน กรุงเทพฯ 10330",
   mapURL:"https://www.google.com/maps/search/?api=1&query=13.7425121%2C100.5419701&query_place_id=ChIJAQAAANee4jARzKO247hxrLU",
   parking:"จอดรถได้ที่อาคารจอดรถโรงแรม<br>ประทับตราบัตรจอดรถบริเวณจุดลงทะเบียนหน้างาน",
   dressTH:"ชุดสุภาพโทนขาว ครีม หรือไอวอรี",
   code:"EX-2026-911",
   rsvpURL:(window.EXN && window.EXN.rsvpURL) || siblingURL("rsvp.html"),
-  deadline:"25 กันยายน 2026",
+  deadline:"30 กันยายน 2026",
   cal:{start:"20261006T110000Z", end:"20261006T153000Z"}
 };
 let qp; try{ qp = new URLSearchParams(location.search); }catch(e){ qp = new URLSearchParams(); }
@@ -296,6 +297,10 @@ function render(i){
         <span class="red">NIGHT</span></h1>
       <p class="quote">WE <u>PAUSE</u> THE NOISE.<br>WE <u>X</u>-CHANGE THE MOMENT.</p>
       <p class="thai">ค่ำคืนพิเศษเพื่อขอบคุณคู่ค้าและพันธมิตร<br>ผู้ร่วมเดินทางกับ STIEBEL ELTRON</p>
+      <div class="dresscode">
+        <em>THEME</em>
+        <b>SMART CASUAL</b>
+      </div>
     </div>`,
 
     /* 2 */
@@ -322,17 +327,12 @@ function render(i){
     `<div class="card">
       <p class="eyebrow">AGENDA</p>
       <div class="agenda">
-        <div><b>17:30</b><span>Register, photoshooting and booth visit</span></div>
-        <div><b>18:30</b><span>Welcome &amp; short business /<br>Product highlight review</span></div>
-        <div><b>19:00</b><span>Game activity &amp; business connection</span></div>
-        <div><b>20:30</b><span>Mini concert — Two Popetorn</span></div>
-        <div><b>21:30</b><span>Business connection</span></div>
-        <div><b>22:00</b><span>End</span></div>
-      </div>
-      <div class="dresscode">
-        <em>DRESS CODE</em>
-        <b>ELEGANT WHITE</b>
-        <span>${CONFIG.dressTH}</span>
+        <div><b>17:30</b><span>Registration, Photo Session &amp; Booth Visit</span></div>
+        <div><b>18:30</b><span>Welcome &amp; Brief Business<br>and Product Highlights</span></div>
+        <div><b>19:00</b><span>Game Activities &amp; Business Networking</span></div>
+        <div><b>20:30</b><span>Mini Concert by Two Popetorn</span></div>
+        <div><b>21:30</b><span>Business Networking</span></div>
+        <div><b>22:00</b><span>End of Event</span></div>
       </div>
     </div>`,
 

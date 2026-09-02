@@ -154,8 +154,8 @@
         <input id="fCompany" type="text" autocomplete="organization" placeholder="เช่น บจก. ตัวอย่าง / ผู้จัดการฝ่ายขาย"></div>
 
       <div class="field"><label for="fPhone">เบอร์โทรศัพท์ <b>*</b></label>
-        <input id="fPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="08X-XXX-XXXX">
-        <p class="msg">กรุณากรอกเบอร์โทรศัพท์ให้ครบ 9–10 หลัก</p></div>
+        <input id="fPhone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="12" placeholder="08X-XXX-XXXX">
+        <p class="msg">กรุณากรอกเบอร์โทรศัพท์ให้ครบ 10 หลัก</p></div>
 
       <div class="field"><label for="fEmail">อีเมล</label>
         <input id="fEmail" type="email" autocomplete="email" placeholder="name@company.com">
@@ -318,6 +318,21 @@ plus.onclick  = ()=>{ if(guests<2){ guests++; guestOut.textContent=guests; syncC
 minus.onclick = ()=>{ if(guests>1){ guests--; guestOut.textContent=guests; syncCompanion(); } };
 syncCompanion();
 
+/* เบอร์โทร: รับเฉพาะตัวเลข ไม่เกิน 10 หลัก แล้วใส่ขีดให้เอง 0XX-XXX-XXXX */
+fPhone.addEventListener("input", e=>{
+  const el = e.target;
+  const before = el.value.slice(0, el.selectionStart).replace(/\D/g,"").length;
+  let d = el.value.replace(/\D/g,"").slice(0,10);
+  let out = d;
+  if(d.length > 6)      out = d.slice(0,3)+"-"+d.slice(3,6)+"-"+d.slice(6);
+  else if(d.length > 3) out = d.slice(0,3)+"-"+d.slice(3);
+  el.value = out;
+  /* วางเคอร์เซอร์กลับที่เดิม นับเฉพาะตัวเลขที่อยู่ก่อนหน้า */
+  let pos = 0, seen = 0;
+  while(pos < out.length && seen < before){ if(/\d/.test(out[pos])) seen++; pos++; }
+  el.setSelectionRange(pos, pos);
+});
+
 const bad = (el,on)=>{ el.closest(".field").classList.toggle("err",on); return !on; };
 const alertBox = document.getElementById("alert");
 const showAlert = msg =>{ alertBox.textContent = msg; alertBox.style.display = msg ? "block" : "none"; };
@@ -327,7 +342,7 @@ submitBtn.onclick = async ()=>{
   const name=fName.value.trim(), phone=fPhone.value.trim(), email=fEmail.value.trim();
   let ok = true;
   ok = bad(fName,  name.length<2) && ok;
-  ok = bad(fPhone, phone.replace(/\D/g,"").length<9) && ok;
+  ok = bad(fPhone, phone.replace(/\D/g,"").length!==10) && ok;
   ok = bad(fEmail, email!=="" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) && ok;
   const consentOK = fConsent.checked;
   consentWrap.classList.toggle("err", !consentOK);
